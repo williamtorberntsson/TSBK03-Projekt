@@ -44,7 +44,7 @@ public class PlayerMovement : MonoBehaviour
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight* 0.5f + 0.2f, whatIsGround);
         MyInput();
 
-        Debug.Log(grounded);
+        //Debug.Log(grounded);
         if(Input.GetKey(jumpKey))
             Debug.Log(jumpKey);
 
@@ -74,6 +74,7 @@ public class PlayerMovement : MonoBehaviour
             Invoke(nameof(ResetJump), jumpCooldown); // Reset readyToJump after a certain time
         }
     }
+
 
     private void MovePlayer() {
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
