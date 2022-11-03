@@ -27,6 +27,9 @@ public class PirajaAI : MonoBehaviour
     [SerializeField] private int damageTickRate;
     private int damageDelay;
 
+    [Header("Fleeing")]
+    [SerializeField] private float fleeAngle;
+    [SerializeField] private float fleeRange;
 
 
 
@@ -52,8 +55,6 @@ public class PirajaAI : MonoBehaviour
     void FixedUpdate()
     {
         StateMachine();
-        
-
     }
 
     void StateMachine()
@@ -62,66 +63,87 @@ public class PirajaAI : MonoBehaviour
         Vector3 parajaToPlayerVec = player.transform.position - rigidBody.transform.position;
         float distanceToPlayer = parajaToPlayerVec.magnitude;
         //print(distanceToPlayer);
-        if (state != "chasing" && distanceToPlayer < sightRange && distanceToPlayer > attackRange)
-        {
-            state = "chasing";
-            print("New state: " + state);
-        }
-        //loses sight
-        if(state == "chasing" && distanceToPlayer > sightRange){
-            state = "wandering";
-            print("New state: " + state);
-        }
-        
-        if(state == "chasing" && state != "attacking" && distanceToPlayer < attackRange){
-            state = "attacking";
-            print("New state: " + state);
-            damageDelay = 0;
-        }
+        if(state != "caught"){
+                
+            if (state != "chasing" && distanceToPlayer < sightRange && distanceToPlayer > attackRange)
+            {
+                state = "chasing";
+                print("New state: " + state);
+            }
+            //loses sight
+            if ((state == "chasing" || state == "fleeing") && distanceToPlayer > sightRange)
+            {
+                state = "wandering";
+                print("New state: " + state);
+            }
 
+            if ((state == "chasing" || state == "fleeing") && state != "attacking" && distanceToPlayer < attackRange)
+            {
+                state = "attacking";
+                print("New state: " + state);
+                damageDelay = 0;
+            }
+
+            if (state != "fleeing" && DoesPlayerSeeFish() && distanceToPlayer < fleeRange) {
+                state = "fleeing";
+                print("New state: " + state);
+            }
+        }
 
         // Update state
         switch (state)
         {
             case "chasing":
-                Chasing();
+                Chase();
                 break;
             case "wandering":
-                Wandering();
+                Wander();
                 break;
             case "fleeing":
-                Wandering();
+                Flee();
                 break;
             case "attacking":
-                Attacking();
+                Attack();
+                break;
+            case "caught":
                 break;
         }
     }
 
-    void Chasing()
+    public void setCaught(){
+        state = "caught";
+        print("New state: " + state);
+    }
+
+    void Chase()
     {
         Vector3 diffVec = player.transform.position - rigidBody.transform.position;
         moveDirection = diffVec.normalized;
-
-        rigidBody.AddForce(moveDirection * moveForce * 10f, ForceMode.Force);
-        if (rigidBody.velocity.magnitude >= maxSpeed)
-        {
-            rigidBody.velocity = rigidBody.velocity.normalized * maxSpeed;
-        }
+        SwimInDirection(moveDirection);
     }
 
-    void Attacking()
+    void Flee()
     {
-        Chasing();
-        if(damageDelay <= 0) {
-            player.GetComponent<PlayerController>().DoDamage(attackDamage);
+        Vector3 diffVec = rigidBody.transform.position - player.transform.position;
+        moveDirection = diffVec.normalized;
+        SwimInDirection(moveDirection);
+    }
+
+    void Attack()
+    {
+        Chase();
+        if (damageDelay <= 0)
+        {
+            player.GetComponent<DuckController>().DoDamage(attackDamage);
             damageDelay = damageTickRate;
-        } else {
+        }
+        else
+        {
             damageDelay--;
         }
     }
 
-    void Wandering()
+    void Wander()
     {
         float rand = Random.Range(0.0f, 1.0f);
 
@@ -137,6 +159,27 @@ public class PirajaAI : MonoBehaviour
                 rigidBody.velocity = rigidBody.velocity.normalized * maxSpeed;
             }
         }
+    }
+
+    void SwimInDirection(Vector3 direction)
+    {
+        rigidBody.AddForce(direction * moveForce * 10f, ForceMode.Force);
+        if (rigidBody.velocity.magnitude >= maxSpeed)
+        {
+            rigidBody.velocity = rigidBody.velocity.normalized * maxSpeed;
+        }
+    }
+
+    bool DoesPlayerSeeFish() {
+        Vector3 PlayerToPirajaVec = rigidBody.transform.position - player.transform.position;
+
+
+        float angle = Mathf.Acos( Vector3.Dot(PlayerToPirajaVec.normalized, player.transform.forward));
+        //print("angle: " +angle + " < " + fleeAngle* Mathf.PI / 180);
+
+         
+
+        return (angle < fleeAngle* Mathf.PI / 180);
     }
 
 }
