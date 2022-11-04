@@ -45,8 +45,8 @@ public class PlayerMovement : MonoBehaviour
         MyInput();
 
         //Debug.Log(grounded);
-        if(Input.GetKey(jumpKey))
-            Debug.Log(jumpKey);
+       // if(Input.GetKey(jumpKey))
+        //    Debug.Log(jumpKey);
 
         // handle drag
         if (grounded)
@@ -67,12 +67,12 @@ public class PlayerMovement : MonoBehaviour
         verticalInput = Input.GetAxisRaw("Vertical");
 
         // Can jump?
-        if(Input.GetKey(jumpKey) && readyToJump && grounded) {
+       /* if(Input.GetKey(jumpKey) && readyToJump && grounded) {
             readyToJump = false;
             Jump();
 
             Invoke(nameof(ResetJump), jumpCooldown); // Reset readyToJump after a certain time
-        }
+        }*/
     }
 
 

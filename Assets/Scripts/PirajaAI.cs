@@ -9,6 +9,8 @@ public class PirajaAI : MonoBehaviour
     Vector3 moveDirection;
     Rigidbody rigidBody;
     GameObject player;
+    GameObject beak;
+    Collider collider;
     [Header("Movement")]
     [SerializeField] private float moveForce;
     [SerializeField] private float maxSpeed;
@@ -31,6 +33,12 @@ public class PirajaAI : MonoBehaviour
     [SerializeField] private float fleeAngle;
     [SerializeField] private float fleeRange;
 
+    [Header("Caught")]
+    [SerializeField] private float beakOffset;
+
+    [Header("Flying")]
+    [SerializeField] private LayerMask whatIsGround;
+    [SerializeField] private float pirajaHeight;
 
 
     private string state;
@@ -40,7 +48,7 @@ public class PirajaAI : MonoBehaviour
     {
         // Statemachine variables
         state = "wandering";
-
+        collider = GetComponent<Collider>();
         // Component variables
         rigidBody = GetComponent<Rigidbody>();
         player = GameObject.FindGameObjectsWithTag("Player")[0];
@@ -62,9 +70,15 @@ public class PirajaAI : MonoBehaviour
         //setting chasing if close to player
         Vector3 parajaToPlayerVec = player.transform.position - rigidBody.transform.position;
         float distanceToPlayer = parajaToPlayerVec.magnitude;
+        Debug.DrawRay(transform.position, Vector3.down * (pirajaHeight * 0.5f + 0.2f), Color.yellow);
+        bool grounded = Physics.Raycast(transform.position, Vector3.down, pirajaHeight * 0.5f + 0.2f, whatIsGround);
+        if (grounded)
+            print("Grounded");
+
         //print(distanceToPlayer);
-        if(state != "caught"){
-                
+        if (state != "caught" && state != "flying")
+        {
+
             if (state != "chasing" && distanceToPlayer < sightRange && distanceToPlayer > attackRange)
             {
                 state = "chasing";
@@ -84,10 +98,16 @@ public class PirajaAI : MonoBehaviour
                 damageDelay = 0;
             }
 
-            if (state != "fleeing" && DoesPlayerSeeFish() && distanceToPlayer < fleeRange) {
+            if (state != "fleeing" && DoesPlayerSeeFish() && distanceToPlayer < fleeRange)
+            {
                 state = "fleeing";
                 print("New state: " + state);
             }
+
+        }
+        if (state == "flying" && grounded)
+        {
+            state = "wandering";
         }
 
         // Update state
@@ -106,13 +126,41 @@ public class PirajaAI : MonoBehaviour
                 Attack();
                 break;
             case "caught":
+                AttachToBeak();
                 break;
         }
     }
 
-    public void setCaught(){
+    public void SetCaught(GameObject _beak)
+    {
+        beak = _beak;
         state = "caught";
+        rigidBody.useGravity = false;
         print("New state: " + state);
+    }
+
+    public void SetReleased(Vector3 throwDir, float throwForce)
+    {
+        state = "flying";
+        print("New state: " + state);
+        rigidBody.AddForce(throwDir * throwForce, ForceMode.Force);
+        rigidBody.useGravity = true;
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if ((state == "flying"  || state == "caught") && collision.gameObject.tag == "Player")
+        {
+            Physics.IgnoreCollision(player.GetComponent<Collider>(), collider);
+        }
+    }
+
+
+    void AttachToBeak()
+    {
+        transform.position = beak.transform.position; //+ player.transform.forward * beakOffset;
+        print("piraja: " + transform.position);
+        print("beak: " + beak.transform.position);
     }
 
     void Chase()
@@ -170,16 +218,17 @@ public class PirajaAI : MonoBehaviour
         }
     }
 
-    bool DoesPlayerSeeFish() {
+    bool DoesPlayerSeeFish()
+    {
         Vector3 PlayerToPirajaVec = rigidBody.transform.position - player.transform.position;
 
 
-        float angle = Mathf.Acos( Vector3.Dot(PlayerToPirajaVec.normalized, player.transform.forward));
+        float angle = Mathf.Acos(Vector3.Dot(PlayerToPirajaVec.normalized, player.transform.forward));
         //print("angle: " +angle + " < " + fleeAngle* Mathf.PI / 180);
 
-         
 
-        return (angle < fleeAngle* Mathf.PI / 180);
+
+        return (angle < fleeAngle * Mathf.PI / 180);
     }
 
 }
