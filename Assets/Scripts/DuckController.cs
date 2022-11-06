@@ -22,10 +22,10 @@ public class DuckController : MonoBehaviour
         health = maxHealth;
         List<GameObject> children = new List<GameObject>();
 
+        // Find beak object
         for (int i = 0; i < transform.childCount; ++i)
         {
             Transform currentItem = transform.GetChild(i);
-
             //Search by name
             if (currentItem.name.Equals("Beak"))
             {
@@ -39,6 +39,8 @@ public class DuckController : MonoBehaviour
     void Update()
     {
         AimControls();
+
+        // Catch/Release piraja
         if (Input.GetKeyDown(catchKey))
         {
             if(caughtPiraja){
