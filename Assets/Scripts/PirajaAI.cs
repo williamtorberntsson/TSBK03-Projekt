@@ -9,6 +9,7 @@ public class PirajaAI : MonoBehaviour
     Vector3 moveDirection;
     Rigidbody rigidBody;
     GameObject player;
+    GameObject duck;
     GameObject beak;
     Collider collider;
     [Header("Movement")]
@@ -51,7 +52,7 @@ public class PirajaAI : MonoBehaviour
         collider = GetComponent<Collider>();
         // Component variables
         rigidBody = GetComponent<Rigidbody>();
-        player = GameObject.FindGameObjectsWithTag("Player")[0];
+        duck = GameObject.FindGameObjectsWithTag("Duck")[0];
     }
 
     // Update is called once per frame
@@ -68,15 +69,11 @@ public class PirajaAI : MonoBehaviour
     void StateMachine()
     {
         //setting chasing if close to player
-        Vector3 parajaToPlayerVec = player.transform.position - rigidBody.transform.position;
+        Vector3 parajaToPlayerVec = duck.transform.position - rigidBody.transform.position;
         float distanceToPlayer = parajaToPlayerVec.magnitude;
-        Debug.DrawRay(transform.position, Vector3.down * (pirajaHeight * 0.5f + 0.2f), Color.yellow);
-        bool grounded = Physics.Raycast(transform.position, Vector3.down, pirajaHeight * 0.5f + 0.2f, whatIsGround);
-        if (grounded)
-            print("Grounded");
 
         //print(distanceToPlayer);
-        if (state != "caught" && state != "flying")
+        if (state != "caught" && state != "flying") 
         {
 
             if (state != "chasing" && distanceToPlayer < sightRange && distanceToPlayer > attackRange)
@@ -98,16 +95,22 @@ public class PirajaAI : MonoBehaviour
                 damageDelay = 0;
             }
 
-            if (state != "fleeing" && DoesPlayerSeeFish() && distanceToPlayer < fleeRange)
+            if (!duck.GetComponent<DuckController>().hasCaughtPiraja() && state != "fleeing" && DoesPlayerSeeFish() && distanceToPlayer < fleeRange)
             {
                 state = "fleeing";
                 print("New state: " + state);
             }
 
         }
-        if (state == "flying" && grounded)
+        if (state == "flying")
         {
-            state = "wandering";
+            bool grounded = Physics.Raycast(transform.position, Vector3.down, pirajaHeight * 0.5f + 0.2f, whatIsGround);
+            Debug.DrawRay(transform.position, Vector3.down * (pirajaHeight * 0.5f + 0.2f), Color.yellow);
+            if (grounded)
+            {
+                print("Grounded");
+                state = "wandering";
+            }
         }
 
         // Update state
@@ -149,9 +152,11 @@ public class PirajaAI : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if ((state == "flying"  || state == "caught") && collision.gameObject.tag == "Player")
+        if ((state == "flying" || state == "caught") && collision.gameObject.tag == "Player")
         {
-            Physics.IgnoreCollision(player.GetComponent<Collider>(), collider);
+
+            Physics.IgnoreCollision(duck.GetComponent<Collider>(), collider);
+
         }
     }
 
@@ -159,22 +164,22 @@ public class PirajaAI : MonoBehaviour
     void AttachToBeak()
     {
         transform.position = beak.transform.position; //+ player.transform.forward * beakOffset;
-        print("piraja: " + transform.position);
-        print("beak: " + beak.transform.position);
+        //print("piraja: " + transform.position);
+        //print("beak: " + beak.transform.position);
     }
 
     void Chase()
     {
-        Vector3 diffVec = player.transform.position - rigidBody.transform.position;
+        Vector3 diffVec = duck.transform.position - rigidBody.transform.position;
         moveDirection = diffVec.normalized;
-        SwimInDirection(moveDirection);
+        SwimInDirection(moveDirection, moveForce);
     }
 
     void Flee()
     {
-        Vector3 diffVec = rigidBody.transform.position - player.transform.position;
+        Vector3 diffVec = rigidBody.transform.position - duck.transform.position;
         moveDirection = diffVec.normalized;
-        SwimInDirection(moveDirection);
+        SwimInDirection(moveDirection, moveForce);
     }
 
     void Attack()
@@ -182,7 +187,7 @@ public class PirajaAI : MonoBehaviour
         Chase();
         if (damageDelay <= 0)
         {
-            player.GetComponent<DuckController>().DoDamage(attackDamage);
+            duck.GetComponent<DuckController>().DoDamage(attackDamage);
             damageDelay = damageTickRate;
         }
         else
@@ -201,29 +206,26 @@ public class PirajaAI : MonoBehaviour
         {
             //print(moveDirection);
             //print("random movement");
-            rigidBody.AddForce(moveDirection * randomMovementForce, ForceMode.Force);
-            if (rigidBody.velocity.magnitude >= maxSpeed)
-            {
-                rigidBody.velocity = rigidBody.velocity.normalized * maxSpeed;
-            }
+            SwimInDirection(moveDirection, randomMovementForce);
         }
     }
 
-    void SwimInDirection(Vector3 direction)
+    void SwimInDirection(Vector3 direction, float force)
     {
-        rigidBody.AddForce(direction * moveForce * 10f, ForceMode.Force);
+        rigidBody.AddForce(direction * force * 10f, ForceMode.Force);
         if (rigidBody.velocity.magnitude >= maxSpeed)
         {
             rigidBody.velocity = rigidBody.velocity.normalized * maxSpeed;
         }
+        transform.rotation = Quaternion.LookRotation (direction);        
     }
 
     bool DoesPlayerSeeFish()
     {
-        Vector3 PlayerToPirajaVec = rigidBody.transform.position - player.transform.position;
+        Vector3 PlayerToPirajaVec = rigidBody.transform.position - duck.transform.position;
 
 
-        float angle = Mathf.Acos(Vector3.Dot(PlayerToPirajaVec.normalized, player.transform.forward));
+        float angle = Mathf.Acos(Vector3.Dot(PlayerToPirajaVec.normalized, duck.transform.forward));
         //print("angle: " +angle + " < " + fleeAngle* Mathf.PI / 180);
 
 

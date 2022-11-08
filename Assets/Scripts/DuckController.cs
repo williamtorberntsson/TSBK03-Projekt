@@ -52,6 +52,10 @@ public class DuckController : MonoBehaviour
         }
     }
 
+    public bool hasCaughtPiraja(){
+        return caughtPiraja;
+    }
+
     public void DoDamage(int damage)
     {
         health -= damage;

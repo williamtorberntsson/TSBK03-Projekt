@@ -17,6 +17,6 @@ public class TextureScroll : MonoBehaviour
     {
         float offsetX = Time.time * scrollX;
         float offsetY = Time.time * scrollY;
-        GetComponent<Renderer>().material.mainTextureOffset = new Vector2(offsetX,offsetY);
+        GetComponent<Renderer>().material.SetTextureOffset("_OffsetTex", new Vector2(offsetX,offsetY));
     }
 }
