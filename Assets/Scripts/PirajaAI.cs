@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class PirajaAI : MonoBehaviour
 {
 
@@ -12,6 +13,7 @@ public class PirajaAI : MonoBehaviour
     GameObject duck;
     GameObject beak;
     Collider collider;
+
     [Header("Movement")]
     [SerializeField] private float moveForce;
     [SerializeField] private float maxSpeed;
@@ -41,6 +43,11 @@ public class PirajaAI : MonoBehaviour
     [SerializeField] private LayerMask whatIsGround;
     [SerializeField] private float pirajaHeight;
 
+    [Header("Respawn")]
+    [SerializeField] private LayerMask whatIsKitchenDecoration;
+    [SerializeField] private int respawnDelay;
+    [SerializeField] private Vector3 respawnPosition;
+    private int collidesInARow;
 
     private string state;
 
@@ -58,7 +65,13 @@ public class PirajaAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(ShouldRespawn()) {
+            float angle = Random.Range(-Mathf.PI, Mathf.PI);
+            float x = Mathf.Cos(angle);
+            float z = Mathf.Sin(angle);
 
+            Respawn(new Vector3(5*x, 0, 5*z));
+        }
     }
 
     void FixedUpdate()
@@ -73,43 +86,31 @@ public class PirajaAI : MonoBehaviour
         float distanceToPlayer = parajaToPlayerVec.magnitude;
 
         //print(distanceToPlayer);
-        if (state != "caught" && state != "flying") 
+        if (state != "caught" && state != "flying")
         {
-
+            // can see player
             if (state != "chasing" && distanceToPlayer < sightRange && distanceToPlayer > attackRange)
             {
                 state = "chasing";
-                print("New state: " + state);
+                //print("New state: " + state);
             }
-            //loses sight
+            // loses sight
             if ((state == "chasing" || state == "fleeing") && distanceToPlayer > sightRange)
             {
                 state = "wandering";
-                print("New state: " + state);
+                // print("New state: " + state);
             }
-
+            // starts to attack
             if ((state == "chasing" || state == "fleeing") && state != "attacking" && distanceToPlayer < attackRange)
             {
                 state = "attacking";
-                print("New state: " + state);
                 damageDelay = 0;
+                //print("New state: " + state);/state = "wandering";
             }
-
-            if (!duck.GetComponent<DuckController>().hasCaughtPiraja() && state != "fleeing" && DoesPlayerSeeFish() && distanceToPlayer < fleeRange)
+            if (state != "fleeing" && distanceToPlayer < sightRange && DoesPlayerSeeFish())
             {
                 state = "fleeing";
-                print("New state: " + state);
-            }
-
-        }
-        if (state == "flying")
-        {
-            bool grounded = Physics.Raycast(transform.position, Vector3.down, pirajaHeight * 0.5f + 0.2f, whatIsGround);
-            Debug.DrawRay(transform.position, Vector3.down * (pirajaHeight * 0.5f + 0.2f), Color.yellow);
-            if (grounded)
-            {
-                print("Grounded");
-                state = "wandering";
+                // print("New state: " + state);
             }
         }
 
@@ -139,13 +140,13 @@ public class PirajaAI : MonoBehaviour
         beak = _beak;
         state = "caught";
         rigidBody.useGravity = false;
-        print("New state: " + state);
+        //print("New state: " + state);
     }
 
     public void SetReleased(Vector3 throwDir, float throwForce)
     {
         state = "flying";
-        print("New state: " + state);
+        //print("New state: " + state);
         rigidBody.AddForce(throwDir * throwForce, ForceMode.Force);
         rigidBody.useGravity = true;
     }
@@ -154,16 +155,41 @@ public class PirajaAI : MonoBehaviour
     {
         if ((state == "flying" || state == "caught") && collision.gameObject.tag == "Player")
         {
-
             Physics.IgnoreCollision(duck.GetComponent<Collider>(), collider);
-
         }
+    }
+
+    // Check if located ontop of kitchen and need to respawn
+    bool ShouldRespawn()
+    {
+        bool grounded = Physics.Raycast(transform.position, Vector3.down, pirajaHeight * 0.5f + 0.2f, whatIsKitchenDecoration);
+        if (grounded)
+        {
+            collidesInARow++;
+            print("Collide with kitchen!");
+        }
+        else
+        {
+            collidesInARow = 0;
+        }
+
+        if (collidesInARow >= respawnDelay)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    void Respawn(Vector3 pos) {
+        transform.position = pos;
     }
 
 
     void AttachToBeak()
     {
-        transform.position = beak.transform.position; //+ player.transform.forward * beakOffset;
+        transform.rotation = Quaternion.LookRotation(duck.transform.right);
+        transform.position = beak.transform.position + duck.transform.forward * 0.5f; //+ player.transform.forward * beakOffset;
+
         //print("piraja: " + transform.position);
         //print("beak: " + beak.transform.position);
     }
@@ -217,18 +243,15 @@ public class PirajaAI : MonoBehaviour
         {
             rigidBody.velocity = rigidBody.velocity.normalized * maxSpeed;
         }
-        transform.rotation = Quaternion.LookRotation (direction);        
+        transform.rotation = Quaternion.LookRotation(direction);
     }
 
     bool DoesPlayerSeeFish()
     {
         Vector3 PlayerToPirajaVec = rigidBody.transform.position - duck.transform.position;
 
-
         float angle = Mathf.Acos(Vector3.Dot(PlayerToPirajaVec.normalized, duck.transform.forward));
         //print("angle: " +angle + " < " + fleeAngle* Mathf.PI / 180);
-
-
 
         return (angle < fleeAngle * Mathf.PI / 180);
     }
