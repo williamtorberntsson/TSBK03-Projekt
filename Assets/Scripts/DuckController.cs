@@ -59,6 +59,12 @@ public class DuckController : MonoBehaviour
     public void DoDamage(int damage)
     {
         health -= damage;
+
+        GameObject[] ducks = GameObject.FindGameObjectsWithTag("ActiveLife");
+
+        ducks[0].tag = "InactiveLife";
+        ducks[0].SetActive(false);
+
         print("I took " + damage + " damage!");
     }
 

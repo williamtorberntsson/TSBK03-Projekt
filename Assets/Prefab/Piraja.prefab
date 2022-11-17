@@ -149,7 +149,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   respawnDelay: 100
-  respawnPosition: {x: 5, y: 0, z: 5}
+  respawnRadius: 7
 --- !u!1001 &1316188009182796227
 PrefabInstance:
   m_ObjectHideFlags: 0

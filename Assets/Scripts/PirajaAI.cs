@@ -46,7 +46,7 @@ public class PirajaAI : MonoBehaviour
     [Header("Respawn")]
     [SerializeField] private LayerMask whatIsKitchenDecoration;
     [SerializeField] private int respawnDelay;
-    [SerializeField] private Vector3 respawnPosition;
+    [SerializeField] private int respawnRadius;
     private int collidesInARow;
 
     private string state;
@@ -65,13 +65,7 @@ public class PirajaAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(ShouldRespawn()) {
-            float angle = Random.Range(-Mathf.PI, Mathf.PI);
-            float x = Mathf.Cos(angle);
-            float z = Mathf.Sin(angle);
 
-            Respawn(new Vector3(5*x, 0, 5*z));
-        }
     }
 
     void FixedUpdate()
@@ -92,25 +86,25 @@ public class PirajaAI : MonoBehaviour
             if (state != "chasing" && distanceToPlayer < sightRange && distanceToPlayer > attackRange)
             {
                 state = "chasing";
-                //print("New state: " + state);
+                print("New state: " + state);
             }
             // loses sight
             if ((state == "chasing" || state == "fleeing") && distanceToPlayer > sightRange)
             {
                 state = "wandering";
-                // print("New state: " + state);
+                print("New state: " + state);
             }
             // starts to attack
             if ((state == "chasing" || state == "fleeing") && state != "attacking" && distanceToPlayer < attackRange)
             {
                 state = "attacking";
                 damageDelay = 0;
-                //print("New state: " + state);/state = "wandering";
+                print("New state: " + state);
             }
             if (state != "fleeing" && distanceToPlayer < sightRange && DoesPlayerSeeFish())
             {
                 state = "fleeing";
-                // print("New state: " + state);
+                print("New state: " + state);
             }
         }
 
@@ -140,22 +134,46 @@ public class PirajaAI : MonoBehaviour
         beak = _beak;
         state = "caught";
         rigidBody.useGravity = false;
-        //print("New state: " + state);
+        print("New state: " + state);
     }
 
     public void SetReleased(Vector3 throwDir, float throwForce)
     {
         state = "flying";
-        //print("New state: " + state);
+        print("New state: " + state);
         rigidBody.AddForce(throwDir * throwForce, ForceMode.Force);
         rigidBody.useGravity = true;
     }
 
+    void OnCollisionStay(Collision collision)
+    {
+        if (ShouldRespawn())
+        {
+            Respawn();
+        }
+    }
+
+
     void OnCollisionEnter(Collision collision)
     {
-        if ((state == "flying" || state == "caught") && collision.gameObject.tag == "Player")
+        if ((state == "flying" || state == "caught"))
         {
-            Physics.IgnoreCollision(duck.GetComponent<Collider>(), collider);
+            if (collision.gameObject.tag == "Player")
+            {
+
+                Physics.IgnoreCollision(duck.GetComponent<Collider>(), collider);
+            }
+            print("Collision enter");
+            // Check if touch water
+            bool grounded = Physics.Raycast(transform.position, Vector3.down, pirajaHeight * 0.5f + 0.2f, whatIsGround);
+            if (grounded)
+            {
+                state = "wandering";
+                print("touch ground");
+            }
+
+            // Check if touch kitchen decoration
+
         }
     }
 
@@ -166,7 +184,6 @@ public class PirajaAI : MonoBehaviour
         if (grounded)
         {
             collidesInARow++;
-            print("Collide with kitchen!");
         }
         else
         {
@@ -180,8 +197,13 @@ public class PirajaAI : MonoBehaviour
         return false;
     }
 
-    void Respawn(Vector3 pos) {
-        transform.position = pos;
+    void Respawn()
+    {
+        float angle = Random.Range(-Mathf.PI, Mathf.PI);
+        float x = Mathf.Cos(angle);
+        float z = Mathf.Sin(angle);
+
+        transform.position = new Vector3(respawnRadius * x, 7, respawnRadius * z);
     }
 
 
