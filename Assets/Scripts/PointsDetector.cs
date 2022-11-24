@@ -5,11 +5,14 @@ using UnityEngine;
 public class PointsDetector : MonoBehaviour
 {
 
-    private GameObject gameController;
+    [Header("Health")]
+    [SerializeField] private int gainHealthAmount; 
+    private GameObject gameController, duckController;
     // Start is called before the first frame update
     void Start()
     {
-        gameController = GameObject.FindGameObjectsWithTag("GameController")[0];
+        gameController = GameObject.FindGameObjectWithTag("GameController");
+        duckController = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
@@ -23,6 +26,6 @@ public class PointsDetector : MonoBehaviour
 
         Physics.IgnoreCollision(collision.collider, GetComponent<Collider>());
         gameController.GetComponent<GameController>().AddPoints(1);
-
+        //duckController.GetComponent<GameController>().giveHealth(gainHealthAmount);
     }
 }

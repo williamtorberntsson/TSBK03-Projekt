@@ -56,9 +56,18 @@ public class DuckController : MonoBehaviour
         return caughtPiraja;
     }
 
+    public void giveHealth(int healthPoint){
+        health += healthPoint;
+    }
+
     public void DoDamage(int damage)
     {
-        health -= damage;
+        if(health > 0){
+            health -= damage;
+            if(health < 0){
+                health = 0;
+            }
+        }
 
         GameObject[] ducks = GameObject.FindGameObjectsWithTag("ActiveLife");
 
