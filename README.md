@@ -2,8 +2,8 @@
 
 Saker vi vill göra:
 
-Respawnsystem
-Poängsystem
+Respawnsystem Check
+Poängsystem Check
 Livsystem
 Ljudeffekter och musik
 Vattnet skvätter när man kastar saker i det

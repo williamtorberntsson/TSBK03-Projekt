@@ -10,6 +10,13 @@ public class GameController : MonoBehaviour
     private List<Vector3> cameraAngles;
     private int points;
 
+    [Header("Spawn piraja")]
+    [SerializeField] private float spawnInterval;
+    [SerializeField] private GameObject pirajaPrefab;
+    [SerializeField] private int nrOfPirajaToSpawn;
+    private float spawnCountDown;
+
+    [SerializeField] private int respawnRadius;
     private bool toggleCam;
 
     [SerializeField] private TMP_Text scoreText;
@@ -20,6 +27,10 @@ public class GameController : MonoBehaviour
         points = 0;
         cameraMode = 0;
         toggleCam = false;
+        
+        spawnCountDown = spawnInterval; 
+
+        SpawnNewPirajas(nrOfPirajaToSpawn);
 
         cameraPositions = new List<Vector3>();
         cameraAngles = new List<Vector3>();
@@ -43,9 +54,16 @@ public class GameController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.K)){
             switchCamera();
         }
+
+        // Update spawn timer
+        spawnCountDown -= Time.deltaTime;
+        if(spawnCountDown <= 0) {
+            SpawnNewPirajas(nrOfPirajaToSpawn);
+            spawnCountDown = spawnInterval;
+        }
     }
 
-    void setCameraMode(int mode) {
+     void setCameraMode(int mode) {
         Camera.main.transform.position = cameraPositions[mode];
         Camera.main.transform.eulerAngles = cameraAngles[mode];
     }
@@ -65,5 +83,18 @@ public class GameController : MonoBehaviour
 
     public int GetPoints(){
         return points;
+    }
+
+    private void SpawnNewPirajas(int n) {
+        for(int i=0; i < n; i++) {
+            SpawnNewPiraja();
+        }
+    }
+
+    private void SpawnNewPiraja() {
+        float angle = Random.Range(-Mathf.PI, Mathf.PI);
+        float x = Mathf.Cos(angle);
+        float z = Mathf.Sin(angle);
+        Instantiate(pirajaPrefab, new Vector3(respawnRadius * x, 7, respawnRadius * z), Quaternion.identity);
     }
 }

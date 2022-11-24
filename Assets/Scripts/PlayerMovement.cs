@@ -26,12 +26,15 @@ public class PlayerMovement : MonoBehaviour
     float horizontalInput;
     float verticalInput;
 
+    public bool controlsEnabled;
+
     Vector3 moveDirection;
     Rigidbody rigidBody;
     
     // Start is called before the first frame update
     void Start()
     {
+        controlsEnabled = true;
         rigidBody = GetComponent<Rigidbody>();
         rigidBody.freezeRotation = true;
         ResetJump();
@@ -40,19 +43,21 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // ground check
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight* 0.5f + 0.2f, whatIsGround);
-        MyInput();
+        if(controlsEnabled){
 
-        //Debug.Log(grounded);
-       // if(Input.GetKey(jumpKey))
-        //    Debug.Log(jumpKey);
+            grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight* 0.5f + 0.2f, whatIsGround);
+            MyInput();
 
-        // handle drag
-        if (grounded)
-            rigidBody.drag = groundDrag;
-        else
-            rigidBody.drag = 0;
+            //Debug.Log(grounded);
+        // if(Input.GetKey(jumpKey))
+            //    Debug.Log(jumpKey);
+
+            // handle drag
+            if (grounded)
+                rigidBody.drag = groundDrag;
+            else
+                rigidBody.drag = 0;
+        }
     }
 
     // Updates on every physics update

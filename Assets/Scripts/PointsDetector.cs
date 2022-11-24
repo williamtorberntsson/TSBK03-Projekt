@@ -6,13 +6,12 @@ public class PointsDetector : MonoBehaviour
 {
 
     [Header("Health")]
-    [SerializeField] private int gainHealthAmount; 
     private GameObject gameController, duckController;
     // Start is called before the first frame update
     void Start()
     {
         gameController = GameObject.FindGameObjectWithTag("GameController");
-        duckController = GameObject.FindGameObjectWithTag("Player");
+        duckController = GameObject.FindGameObjectWithTag("Duck");
     }
 
     // Update is called once per frame
@@ -26,6 +25,6 @@ public class PointsDetector : MonoBehaviour
 
         Physics.IgnoreCollision(collision.collider, GetComponent<Collider>());
         gameController.GetComponent<GameController>().AddPoints(1);
-        //duckController.GetComponent<GameController>().giveHealth(gainHealthAmount);
+        duckController.GetComponent<DuckController>().giveHealth();
     }
 }

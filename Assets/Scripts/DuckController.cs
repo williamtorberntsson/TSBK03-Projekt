@@ -1,13 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DuckController : MonoBehaviour
 {
     private int health;
+    private bool controlsEnabled;
     private GameObject beak;
     private GameObject caughtPiraja;
+    [Header("Health")]
     [SerializeField] private int maxHealth;
+    [SerializeField] private int gainHealthAmount;
 
     [Header("Catch/throw")]
     [SerializeField] private float catchRange;
@@ -16,11 +20,15 @@ public class DuckController : MonoBehaviour
     [Header("Controls")]
     [SerializeField] private KeyCode catchKey = KeyCode.Space;
 
+    Stack<GameObject> inactiveDucks;
+
     // Start is called before the first frame update
     void Start()
     {
         health = maxHealth;
+        controlsEnabled = true;
         List<GameObject> children = new List<GameObject>();
+        inactiveDucks = new Stack<GameObject>();
 
         // Find beak object
         for (int i = 0; i < transform.childCount; ++i)
@@ -38,39 +46,54 @@ public class DuckController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        AimControls();
+        if(controlsEnabled){
+            AimControls();
 
-        // Catch/Release piraja
-        if (Input.GetKeyDown(catchKey))
-        {
-            if(caughtPiraja){
-                ReleasePiraja();
-            }
-            else{
-                CatchPiraja();
+            // Catch/Release piraja
+            if (Input.GetKeyDown(catchKey))
+            {
+                if (caughtPiraja)
+                {
+                    ReleasePiraja();
+                }
+                else
+                {
+                    CatchPiraja();
+                }
             }
         }
+        
     }
 
-    public bool hasCaughtPiraja(){
+    public bool hasCaughtPiraja()
+    {
         return caughtPiraja;
     }
 
-    public void giveHealth(int healthPoint){
-        health += healthPoint;
+    public void giveHealth()
+    {
+        print("Gained " + gainHealthAmount + " health");
+        health += gainHealthAmount;
+        GameObject currDuck = inactiveDucks.Pop();
+        currDuck.tag = "ActiveLife";
+        currDuck.SetActive(true);
     }
 
     public void DoDamage(int damage)
     {
-        if(health > 0){
+        if (health > 0)
+        {
             health -= damage;
-            if(health < 0){
-                health = 0;
-            }
+        }
+        if (health <= 0)
+        {
+            health = 0;
+            KillDuck();
+            return;
         }
 
         GameObject[] ducks = GameObject.FindGameObjectsWithTag("ActiveLife");
-
+        inactiveDucks.Push(ducks[0]);
         ducks[0].tag = "InactiveLife";
         ducks[0].SetActive(false);
 
@@ -88,7 +111,8 @@ public class DuckController : MonoBehaviour
         }
     }
 
-    void ReleasePiraja(){
+    void ReleasePiraja()
+    {
         Vector3 throwDir = new Vector3(transform.forward.x, throwHeight, transform.forward.z);
         caughtPiraja.GetComponent<PirajaAI>().SetReleased(throwDir, throwForce);
         caughtPiraja = null;
@@ -117,5 +141,21 @@ public class DuckController : MonoBehaviour
 
         }
         // move piraja to nose
+    }
+
+    IEnumerator ReloadInSecs(float t)
+    {
+
+            yield return new WaitForSeconds(t);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name   );
+    }
+    void KillDuck()
+    {
+        GetComponentInParent<Rigidbody>().constraints = RigidbodyConstraints.None; 
+        controlsEnabled = false;
+        GetComponentInParent<PlayerMovement>().controlsEnabled = false;
+        ReloadInSecs(1.0f);
+        
+        
     }
 }
