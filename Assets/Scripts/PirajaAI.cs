@@ -30,7 +30,8 @@ public class PirajaAI : MonoBehaviour
     [SerializeField] private float attackRange;
     [SerializeField] private int attackDamage;
     [SerializeField] private int damageTickRate;
-    private int damageDelay;
+    [SerializeField] private float attackInterval;
+    private float timeLastAttack;
 
     [Header("Fleeing")]
     [SerializeField] private float fleeAngle;
@@ -80,7 +81,7 @@ public class PirajaAI : MonoBehaviour
         float distanceToPlayer = parajaToPlayerVec.magnitude;
 
         //print(distanceToPlayer);
-        if (state != "caught" && state != "flying")
+        if (state != "caught" && state != "flying" && state != "deadDuck")
         {
             // can see player
             if (state != "chasing" && distanceToPlayer < sightRange && distanceToPlayer > attackRange)
@@ -98,7 +99,6 @@ public class PirajaAI : MonoBehaviour
             if ((state == "chasing" || state == "fleeing") && state != "attacking" && distanceToPlayer < attackRange)
             {
                 state = "attacking";
-                damageDelay = 0;
                 print("New state: " + state);
             }
             if (state != "fleeing" && distanceToPlayer < sightRange && DoesPlayerSeeFish())
@@ -125,6 +125,9 @@ public class PirajaAI : MonoBehaviour
                 break;
             case "caught":
                 AttachToBeak();
+                break;
+            case "deadDuck":
+                Attack();
                 break;
         }
     }
@@ -233,14 +236,10 @@ public class PirajaAI : MonoBehaviour
     void Attack()
     {
         Chase();
-        if (damageDelay <= 0)
+        if (Time.fixedTime - timeLastAttack >= attackInterval)
         {
             duck.GetComponent<DuckController>().DoDamage(attackDamage);
-            damageDelay = damageTickRate;
-        }
-        else
-        {
-            damageDelay--;
+            timeLastAttack = Time.fixedTime;
         }
     }
 
@@ -276,6 +275,10 @@ public class PirajaAI : MonoBehaviour
         //print("angle: " +angle + " < " + fleeAngle* Mathf.PI / 180);
 
         return (angle < fleeAngle * Mathf.PI / 180);
+    }
+
+    public void SetState(string newState) {
+        state = newState;
     }
 
 }

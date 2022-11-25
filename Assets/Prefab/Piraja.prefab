@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 4433214749336829517}
   - component: {fileID: 5212953717401722049}
   - component: {fileID: 5644542443339752163}
-  - component: {fileID: 4593279777754588861}
   - component: {fileID: 7279037015340337297}
   - component: {fileID: 5414211937142960512}
+  - component: {fileID: 59962626370671119}
+  - component: {fileID: 6276348741512443460}
   m_Layer: 0
   m_Name: Piraja
   m_TagString: Piraja
@@ -87,19 +88,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &4593279777754588861
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 754682278248036515}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &7279037015340337297
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -138,6 +126,7 @@ MonoBehaviour:
   attackRange: 2
   attackDamage: 1
   damageTickRate: 100
+  attackInterval: 1
   fleeAngle: 45
   fleeRange: 10
   beakOffset: 0
@@ -150,6 +139,32 @@ MonoBehaviour:
     m_Bits: 256
   respawnDelay: 100
   respawnRadius: 7
+--- !u!135 &59962626370671119
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 754682278248036515}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!135 &6276348741512443460
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 754682278248036515}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1316188009182796227
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class DuckController : MonoBehaviour
 {
     private int health;
     private bool controlsEnabled;
+    private GameObject gameController;
     private GameObject beak;
     private GameObject caughtPiraja;
     [Header("Health")]
@@ -21,6 +21,7 @@ public class DuckController : MonoBehaviour
     [SerializeField] private KeyCode catchKey = KeyCode.Space;
 
     Stack<GameObject> inactiveDucks;
+    Stack<GameObject> activeDucks;
 
     // Start is called before the first frame update
     void Start()
@@ -29,6 +30,14 @@ public class DuckController : MonoBehaviour
         controlsEnabled = true;
         List<GameObject> children = new List<GameObject>();
         inactiveDucks = new Stack<GameObject>();
+        activeDucks = new Stack<GameObject>();
+        gameController = GameObject.FindGameObjectWithTag("GameController");
+
+        // Push all lives to activeDucks stack
+        GameObject[] allDucks = GameObject.FindGameObjectsWithTag("Life");
+        for(int i = allDucks.Length - 1; i >= 0 ; i--) {
+            activeDucks.Push(allDucks[i]);
+        }
 
         // Find beak object
         for (int i = 0; i < transform.childCount; ++i)
@@ -46,7 +55,8 @@ public class DuckController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(controlsEnabled){
+        if (controlsEnabled)
+        {
             AimControls();
 
             // Catch/Release piraja
@@ -62,7 +72,6 @@ public class DuckController : MonoBehaviour
                 }
             }
         }
-        
     }
 
     public bool hasCaughtPiraja()
@@ -75,7 +84,7 @@ public class DuckController : MonoBehaviour
         print("Gained " + gainHealthAmount + " health");
         health += gainHealthAmount;
         GameObject currDuck = inactiveDucks.Pop();
-        currDuck.tag = "ActiveLife";
+        activeDucks.Push(currDuck);
         currDuck.SetActive(true);
     }
 
@@ -84,20 +93,18 @@ public class DuckController : MonoBehaviour
         if (health > 0)
         {
             health -= damage;
+            GameObject currDuck = activeDucks.Pop();
+            inactiveDucks.Push(currDuck);
+            currDuck.SetActive(false);
+            print("I took " + damage + " damage!");
+        
+            if (health <= 0)
+            {
+                health = 0;
+                gameController.GetComponent<GameController>().DuckDied();
+                return;
+            }
         }
-        if (health <= 0)
-        {
-            health = 0;
-            KillDuck();
-            return;
-        }
-
-        GameObject[] ducks = GameObject.FindGameObjectsWithTag("ActiveLife");
-        inactiveDucks.Push(ducks[0]);
-        ducks[0].tag = "InactiveLife";
-        ducks[0].SetActive(false);
-
-        print("I took " + damage + " damage!");
     }
 
     void AimControls()
@@ -128,34 +135,25 @@ public class DuckController : MonoBehaviour
         Vector3 startPoint = new Vector3(transform.position.x, pirajaHeight, transform.position.z); //duck pos
         Vector3 endPoint = new Vector3(transform.forward.x, 0, transform.forward.z);
 
-        Debug.DrawRay(startPoint, endPoint * rayLength, Color.green);
+        Debug.DrawRay(startPoint, endPoint * rayLength, Color.magenta);
         // If we hit piraja
         if (Physics.Raycast(startPoint, endPoint, out hit, rayLength))
         { //raycast is low an strait
             if (hit.transform.gameObject.tag == "Piraja")
             {
+                print("HIT PIRAJA!!!");
                 hit.transform.GetComponent<PirajaAI>().SetCaught(beak);
                 caughtPiraja = hit.transform.gameObject;
             }
-
-
         }
         // move piraja to nose
     }
 
-    IEnumerator ReloadInSecs(float t)
-    {
 
-            yield return new WaitForSeconds(t);
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name   );
-    }
-    void KillDuck()
+    public void KillDuck()
     {
-        GetComponentInParent<Rigidbody>().constraints = RigidbodyConstraints.None; 
+        GetComponentInParent<Rigidbody>().constraints = RigidbodyConstraints.None;
         controlsEnabled = false;
         GetComponentInParent<PlayerMovement>().controlsEnabled = false;
-        ReloadInSecs(1.0f);
-        
-        
     }
 }
