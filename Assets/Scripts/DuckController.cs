@@ -114,13 +114,15 @@ public class DuckController : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, 100) && hit.transform.tag != "Player")
         {
-            transform.LookAt(hit.point);
-        }
+            Vector3 lookPos = hit.point;            
+            lookPos.y = transform.position.y;
+            transform.LookAt(lookPos);
+            }
     }
 
     void ReleasePiraja()
     {
-        Vector3 throwDir = new Vector3(transform.forward.x, throwHeight, transform.forward.z);
+        Vector3 throwDir = new Vector3(transform.forward.x, throwHeight, transform.forward.z);   // OM Y ÄR HÖGT SÅ BLIR Z OCH X LÅGA. NORMALISERA X OCH Z!!!! SUMMA = 1
         caughtPiraja.GetComponent<PirajaAI>().SetReleased(throwDir, throwForce);
         caughtPiraja = null;
     }

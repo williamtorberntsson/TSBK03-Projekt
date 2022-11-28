@@ -144,6 +144,7 @@ public class PirajaAI : MonoBehaviour
     {
         state = "flying";
         print("New state: " + state);
+        rigidBody.velocity = Vector3.zero;
         rigidBody.AddForce(throwDir * throwForce, ForceMode.Force);
         rigidBody.useGravity = true;
     }

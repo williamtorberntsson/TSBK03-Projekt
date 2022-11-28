@@ -24,8 +24,8 @@ Pirajorna är “gummi-aktiga”
 
 
 ----- BUGGAR -----
-Fiskarna i kastrullen vänder sig när man dör
-Ibland kastas fisken inte från näbben
 Fisken kastas olika högt beroend på vinkeln av ankan
 Fisken kastas snett ibland
+Fiskarna i kastrullen vänder sig när man dör
+Ibland kastas fisken inte från näbben
 Liven tas bort i fel ordning
