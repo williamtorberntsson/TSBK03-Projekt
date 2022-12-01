@@ -121,7 +121,7 @@ MonoBehaviour:
   maxSpeed: 5
   maxAngle: 0
   randomMovementFreq: 0.01
-  randomMovementForce: 20
+  randomMovementForce: 40
   sightRange: 10
   attackRange: 2
   attackDamage: 1

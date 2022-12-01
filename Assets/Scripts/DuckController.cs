@@ -20,6 +20,8 @@ public class DuckController : MonoBehaviour
     [Header("Controls")]
     [SerializeField] private KeyCode catchKey = KeyCode.Space;
 
+    [Header("Smoke")]
+    [SerializeField] private GameObject smoke;
     Stack<GameObject> inactiveDucks;
     Stack<GameObject> activeDucks;
 
@@ -81,11 +83,15 @@ public class DuckController : MonoBehaviour
 
     public void giveHealth()
     {
-        print("Gained " + gainHealthAmount + " health");
-        health += gainHealthAmount;
-        GameObject currDuck = inactiveDucks.Pop();
-        activeDucks.Push(currDuck);
-        currDuck.SetActive(true);
+        if(health < maxHealth){
+            print("Gained " + gainHealthAmount + " health");
+
+            health += gainHealthAmount;
+            GameObject currDuck = inactiveDucks.Pop();
+            Instantiate(smoke, currDuck.transform.position, currDuck.transform.rotation);
+            activeDucks.Push(currDuck);
+            currDuck.SetActive(true);
+        }
     }
 
     public void DoDamage(int damage)
@@ -94,6 +100,7 @@ public class DuckController : MonoBehaviour
         {
             health -= damage;
             GameObject currDuck = activeDucks.Pop();
+            Instantiate(smoke, currDuck.transform.position, currDuck.transform.rotation);
             inactiveDucks.Push(currDuck);
             currDuck.SetActive(false);
             print("I took " + damage + " damage!");
@@ -114,15 +121,16 @@ public class DuckController : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, 100) && hit.transform.tag != "Player")
         {
-            Vector3 lookPos = hit.point;            
-            lookPos.y = transform.position.y;
+            Vector3 lookPos = hit.point;
             transform.LookAt(lookPos);
             }
     }
 
     void ReleasePiraja()
     {
-        Vector3 throwDir = new Vector3(transform.forward.x, throwHeight, transform.forward.z);   // OM Y ÄR HÖGT SÅ BLIR Z OCH X LÅGA. NORMALISERA X OCH Z!!!! SUMMA = 1
+        Vector3 throwDir = new Vector3(transform.forward.x, 0, transform.forward.z);
+        throwDir = Vector3.Normalize(throwDir);
+        throwDir.y = throwHeight;   // OM Y ÄR HÖGT SÅ BLIR Z OCH X LÅGA. NORMALISERA X OCH Z!!!! SUMMA = 1
         caughtPiraja.GetComponent<PirajaAI>().SetReleased(throwDir, throwForce);
         caughtPiraja = null;
     }

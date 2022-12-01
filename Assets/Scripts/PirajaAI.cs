@@ -56,7 +56,10 @@ public class PirajaAI : MonoBehaviour
     void Start()
     {
         // Statemachine variables
-        state = "wandering";
+        if (state != "flying")
+        {
+            state = "wandering";
+        }
         collider = GetComponent<Collider>();
         // Component variables
         rigidBody = GetComponent<Rigidbody>();
@@ -81,11 +84,13 @@ public class PirajaAI : MonoBehaviour
         float distanceToPlayer = parajaToPlayerVec.magnitude;
 
         //print(distanceToPlayer);
+
         if (state != "caught" && state != "flying" && state != "deadDuck")
         {
             // can see player
             if (state != "chasing" && distanceToPlayer < sightRange && distanceToPlayer > attackRange)
             {
+                print("HOOOLO" + state);
                 state = "chasing";
                 print("New state: " + state);
             }
@@ -170,8 +175,12 @@ public class PirajaAI : MonoBehaviour
             print("Collision enter");
             // Check if touch water
             bool grounded = Physics.Raycast(transform.position, Vector3.down, pirajaHeight * 0.5f + 0.2f, whatIsGround);
-            if (grounded)
+            if (grounded && state != "caught")
             {
+                if (tag == "Point")
+                {
+                    tag = "Piraja";
+                }
                 state = "wandering";
                 print("touch ground");
             }
@@ -278,8 +287,10 @@ public class PirajaAI : MonoBehaviour
         return (angle < fleeAngle * Mathf.PI / 180);
     }
 
-    public void SetState(string newState) {
+    public void SetState(string newState)
+    {
         state = newState;
+        print("New state: " + state);
     }
 
 }

@@ -16,8 +16,13 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject pirajaPrefab;
     [SerializeField] private int nrOfPirajaToSpawn;
     private float spawnCountDown;
+    [SerializeField] private float forceHeight;
+    [SerializeField] private float spawnForce;
+    [SerializeField] private Vector3 spawnPos;
+    [SerializeField] private float collisionDelay;
 
-    [SerializeField] private int respawnRadius;
+    
+
     private bool toggleCam;
 
     [SerializeField] private TMP_Text scoreText;
@@ -90,7 +95,20 @@ public class GameController : MonoBehaviour
     {
         points += i;
         scoreText.text = "SCORE: " + points;
+
         print("Points: " + points);
+
+        if(points % 10 == 0) {
+            ClearPot();
+        }
+    }
+
+    private void ClearPot() {
+        GameObject[] pointPirajas = GameObject.FindGameObjectsWithTag("Point");
+        print("Clearing pirajas! nr of them: " + pointPirajas.Length);
+        for(int i = 0; i < pointPirajas.Length; i++){
+            Destroy(pointPirajas[i]);
+        }
     }
 
     public int GetPoints()
@@ -111,13 +129,18 @@ public class GameController : MonoBehaviour
         float angle = Random.Range(-Mathf.PI, Mathf.PI);
         float x = Mathf.Cos(angle);
         float z = Mathf.Sin(angle);
-        Instantiate(pirajaPrefab, new Vector3(respawnRadius * x, 7, respawnRadius * z), Quaternion.identity);
+        GameObject newPiraja = Instantiate(pirajaPrefab, spawnPos, Quaternion.identity);
+        newPiraja.GetComponentInChildren<Collider>().enabled = false;
+        newPiraja.GetComponentInChildren<PirajaAI>().SetState("flying");
+
+        StartCoroutine(TurnOnCollision(newPiraja));
+        newPiraja.GetComponent<Rigidbody>().AddForce(new Vector3(x*spawnForce, forceHeight, z * spawnForce));
     }
 
     public void DuckDied()
     {
         duck.GetComponent<DuckController>().KillDuck();
-        StartCoroutine(ReloadInSecs(10.0f));
+        StartCoroutine(ReloadInSecs(7.0f));
         PirajaEatDeadDuck();
     }
 
@@ -134,5 +157,11 @@ public class GameController : MonoBehaviour
     {
         yield return new WaitForSeconds(t);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    IEnumerator TurnOnCollision(GameObject piraja)
+    {
+        yield return new WaitForSeconds(collisionDelay);
+        piraja.GetComponentInChildren<Collider>().enabled = true;
     }
 }
