@@ -25,6 +25,7 @@ public class PointsDetector : MonoBehaviour
         Physics.IgnoreCollision(collision.collider, GetComponent<Collider>());
         gameController.GetComponent<GameController>().AddPoints(1);
         duckController.GetComponent<DuckController>().giveHealth();
+        GetComponent<AudioSource>().Play();
         collision.gameObject.tag = "Point";
         print("setting tag to point!");
     }

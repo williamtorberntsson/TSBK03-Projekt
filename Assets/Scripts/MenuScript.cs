@@ -27,6 +27,7 @@ public class MenuScript : MonoBehaviour
     }
     public void StartGame(){
         print("CLICKED!");
+        GetComponent<AudioSource>().Play();
         cam.GetComponent<Animator>().enabled = true;
         StartCoroutine(ReloadInSecs(2.0f));
 

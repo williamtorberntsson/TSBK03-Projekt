@@ -9,6 +9,8 @@ public class DuckController : MonoBehaviour
     private GameObject gameController;
     private GameObject beak;
     private GameObject caughtPiraja;
+    private AudioSource audioSource;
+
     [Header("Health")]
     [SerializeField] private int maxHealth;
     [SerializeField] private int gainHealthAmount;
@@ -25,6 +27,11 @@ public class DuckController : MonoBehaviour
     Stack<GameObject> inactiveDucks;
     Stack<GameObject> activeDucks;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip quackSound;
+    [SerializeField] private AudioClip popSound;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +41,8 @@ public class DuckController : MonoBehaviour
         inactiveDucks = new Stack<GameObject>();
         activeDucks = new Stack<GameObject>();
         gameController = GameObject.FindGameObjectWithTag("GameController");
+        audioSource = GetComponent<AudioSource>();
+
 
         // Push all lives to activeDucks stack
         GameObject[] allDucks = GameObject.FindGameObjectsWithTag("Life");
@@ -64,6 +73,7 @@ public class DuckController : MonoBehaviour
             // Catch/Release piraja
             if (Input.GetKeyDown(catchKey))
             {
+                
                 if (caughtPiraja)
                 {
                     ReleasePiraja();
@@ -72,6 +82,7 @@ public class DuckController : MonoBehaviour
                 {
                     CatchPiraja();
                 }
+                
             }
         }
     }
@@ -90,6 +101,8 @@ public class DuckController : MonoBehaviour
             GameObject currDuck = inactiveDucks.Pop();
             Instantiate(smoke, currDuck.transform.position, currDuck.transform.rotation);
             activeDucks.Push(currDuck);
+            audioSource.clip = popSound;
+            audioSource.Play();
             currDuck.SetActive(true);
         }
     }
@@ -103,6 +116,8 @@ public class DuckController : MonoBehaviour
             Instantiate(smoke, currDuck.transform.position, currDuck.transform.rotation);
             inactiveDucks.Push(currDuck);
             currDuck.SetActive(false);
+            audioSource.clip = popSound;
+            audioSource.Play();
             print("I took " + damage + " damage!");
         
             if (health <= 0)
@@ -132,7 +147,16 @@ public class DuckController : MonoBehaviour
         throwDir = Vector3.Normalize(throwDir);
         throwDir.y = throwHeight;   // OM Y ÄR HÖGT SÅ BLIR Z OCH X LÅGA. NORMALISERA X OCH Z!!!! SUMMA = 1
         caughtPiraja.GetComponent<PirajaAI>().SetReleased(throwDir, throwForce);
+        PlayQuackAtPitch(0.9f);
+
         caughtPiraja = null;
+    }
+
+    void PlayQuackAtPitch(float pitch)
+    {
+        audioSource.pitch = pitch;
+        audioSource.clip = quackSound;
+        audioSource.Play();
     }
 
     void CatchPiraja()
@@ -152,10 +176,13 @@ public class DuckController : MonoBehaviour
             if (hit.transform.gameObject.tag == "Piraja")
             {
                 print("HIT PIRAJA!!!");
+                PlayQuackAtPitch(1.3f);
                 hit.transform.GetComponent<PirajaAI>().SetCaught(beak);
                 caughtPiraja = hit.transform.gameObject;
+                return;
             }
         }
+        PlayQuackAtPitch(1.0f);
         // move piraja to nose
     }
 

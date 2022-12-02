@@ -20,14 +20,18 @@ public class GameController : MonoBehaviour
     [SerializeField] private float spawnForce;
     [SerializeField] private Vector3 spawnPos;
     [SerializeField] private float collisionDelay;
+    [Header("Audio")]
+    [SerializeField] private AudioClip deadSound;
+    [SerializeField] private AudioClip plopSound;
+    [SerializeField] private AudioClip popSound;
 
-    
 
     private bool toggleCam;
 
     [SerializeField] private TMP_Text scoreText;
 
     private GameObject duck;
+    private AudioSource audioSource;
 
     // Start is called before the first frame update
     void Start()
@@ -40,6 +44,8 @@ public class GameController : MonoBehaviour
         duck = GameObject.FindGameObjectWithTag("Duck");
 
         spawnCountDown = spawnInterval;
+
+        audioSource = GetComponent<AudioSource>();
 
         SpawnNewPirajas(nrOfPirajaToSpawn);
 
@@ -155,7 +161,10 @@ public class GameController : MonoBehaviour
 
     IEnumerator ReloadInSecs(float t)
     {
-        yield return new WaitForSeconds(t);
+        yield return new WaitForSeconds(2.0f);
+        audioSource.clip = deadSound;
+        audioSource.Play();
+        yield return new WaitForSeconds(t-2.0f);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 

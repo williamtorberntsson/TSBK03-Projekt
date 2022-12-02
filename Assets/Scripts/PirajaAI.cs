@@ -64,6 +64,9 @@ public class PirajaAI : MonoBehaviour
         // Component variables
         rigidBody = GetComponent<Rigidbody>();
         duck = GameObject.FindGameObjectsWithTag("Duck")[0];
+        
+        
+
     }
 
     // Update is called once per frame
@@ -74,6 +77,10 @@ public class PirajaAI : MonoBehaviour
 
     void FixedUpdate()
     {
+        if(rigidBody.velocity.magnitude > 0.1)
+        {
+            transform.rotation = Quaternion.LookRotation(rigidBody.velocity);
+        }
         StateMachine();
     }
 
@@ -249,6 +256,7 @@ public class PirajaAI : MonoBehaviour
         if (Time.fixedTime - timeLastAttack >= attackInterval)
         {
             duck.GetComponent<DuckController>().DoDamage(attackDamage);
+            GetComponent<AudioSource>().Play();
             timeLastAttack = Time.fixedTime;
         }
     }
