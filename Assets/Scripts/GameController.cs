@@ -124,6 +124,8 @@ public class GameController : MonoBehaviour
 
     private void SpawnNewPirajas(int n)
     {
+        audioSource.clip = plopSound;
+        audioSource.Play();
         for (int i = 0; i < n; i++)
         {
             SpawnNewPiraja();
@@ -138,7 +140,6 @@ public class GameController : MonoBehaviour
         GameObject newPiraja = Instantiate(pirajaPrefab, spawnPos, Quaternion.identity);
         newPiraja.GetComponentInChildren<Collider>().enabled = false;
         newPiraja.GetComponentInChildren<PirajaAI>().SetState("flying");
-
         StartCoroutine(TurnOnCollision(newPiraja));
         newPiraja.GetComponent<Rigidbody>().AddForce(new Vector3(x*spawnForce, forceHeight, z * spawnForce));
     }
