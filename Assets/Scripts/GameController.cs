@@ -14,7 +14,8 @@ public class GameController : MonoBehaviour
     [Header("Spawn piraja")]
     [SerializeField] private float spawnInterval;
     [SerializeField] private GameObject pirajaPrefab;
-    [SerializeField] private int nrOfPirajaToSpawn;
+    [SerializeField] private int minNrOfPirajaToSpawn = 3;
+    [SerializeField] private int spawnScaling = 3;
     private float spawnCountDown;
     [SerializeField] private float forceHeight;
     [SerializeField] private float spawnForce;
@@ -47,7 +48,7 @@ public class GameController : MonoBehaviour
 
         audioSource = GetComponent<AudioSource>();
 
-        SpawnNewPirajas(nrOfPirajaToSpawn);
+        SpawnNewPirajas(minNrOfPirajaToSpawn);
 
         cameraPositions = new List<Vector3>();
         cameraAngles = new List<Vector3>();
@@ -78,7 +79,14 @@ public class GameController : MonoBehaviour
         spawnCountDown -= Time.deltaTime;
         if (spawnCountDown <= 0)
         {
-            SpawnNewPirajas(nrOfPirajaToSpawn);
+            if (points / spawnScaling <= minNrOfPirajaToSpawn)
+            {
+                SpawnNewPirajas(minNrOfPirajaToSpawn);
+            }
+            else
+            {
+                SpawnNewPirajas(points / spawnScaling);
+            }
             spawnCountDown = spawnInterval;
         }
     }
@@ -104,15 +112,18 @@ public class GameController : MonoBehaviour
 
         print("Points: " + points);
 
-        if(points % 10 == 0) {
+        if (points % 10 == 0)
+        {
             ClearPot();
         }
     }
 
-    private void ClearPot() {
+    private void ClearPot()
+    {
         GameObject[] pointPirajas = GameObject.FindGameObjectsWithTag("Point");
         print("Clearing pirajas! nr of them: " + pointPirajas.Length);
-        for(int i = 0; i < pointPirajas.Length; i++){
+        for (int i = 0; i < pointPirajas.Length; i++)
+        {
             Destroy(pointPirajas[i]);
         }
     }
@@ -141,7 +152,7 @@ public class GameController : MonoBehaviour
         newPiraja.GetComponentInChildren<Collider>().enabled = false;
         newPiraja.GetComponentInChildren<PirajaAI>().SetState("flying");
         StartCoroutine(TurnOnCollision(newPiraja));
-        newPiraja.GetComponent<Rigidbody>().AddForce(new Vector3(x*spawnForce, forceHeight, z * spawnForce));
+        newPiraja.GetComponent<Rigidbody>().AddForce(new Vector3(x * spawnForce, forceHeight, z * spawnForce));
     }
 
     public void DuckDied()
@@ -165,7 +176,7 @@ public class GameController : MonoBehaviour
         yield return new WaitForSeconds(2.0f);
         audioSource.clip = deadSound;
         audioSource.Play();
-        yield return new WaitForSeconds(t-2.0f);
+        yield return new WaitForSeconds(t - 2.0f);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
