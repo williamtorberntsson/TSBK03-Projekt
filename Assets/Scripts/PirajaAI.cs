@@ -97,26 +97,25 @@ public class PirajaAI : MonoBehaviour
             // can see player
             if (state != "chasing" && distanceToPlayer < sightRange && distanceToPlayer > attackRange)
             {
-                print("HOOOLO" + state);
                 state = "chasing";
-                print("New state: " + state);
+                //print("New state: " + state);
             }
             // loses sight
             if ((state == "chasing" || state == "fleeing") && distanceToPlayer > sightRange)
             {
                 state = "wandering";
-                print("New state: " + state);
+                //print("New state: " + state);
             }
             // starts to attack
             if ((state == "chasing" || state == "fleeing") && state != "attacking" && distanceToPlayer < attackRange)
             {
                 state = "attacking";
-                print("New state: " + state);
+                //print("New state: " + state);
             }
             if (state != "fleeing" && distanceToPlayer < sightRange && DoesPlayerSeeFish())
             {
                 state = "fleeing";
-                print("New state: " + state);
+                //print("New state: " + state);
             }
         }
 
@@ -149,13 +148,13 @@ public class PirajaAI : MonoBehaviour
         beak = _beak;
         state = "caught";
         rigidBody.useGravity = false;
-        print("New state: " + state);
+        //print("New state: " + state);
     }
 
     public void SetReleased(Vector3 throwDir, float throwForce)
     {
         state = "flying";
-        print("New state: " + state);
+        //print("New state: " + state);
         rigidBody.velocity = Vector3.zero;
         rigidBody.AddForce(throwDir * throwForce, ForceMode.Force);
         rigidBody.useGravity = true;
@@ -179,7 +178,7 @@ public class PirajaAI : MonoBehaviour
 
                 Physics.IgnoreCollision(duck.GetComponent<Collider>(), collider);
             }
-            print("Collision enter");
+            //print("Collision enter");
             // Check if touch water
             bool grounded = Physics.Raycast(transform.position, Vector3.down, pirajaHeight * 0.5f + 0.2f, whatIsGround);
             if (grounded && state != "caught")
@@ -189,7 +188,7 @@ public class PirajaAI : MonoBehaviour
                     tag = "Piraja";
                 }
                 state = "wandering";
-                print("touch ground");
+                //print("touch ground");
             }
 
             // Check if touch kitchen decoration
@@ -298,7 +297,7 @@ public class PirajaAI : MonoBehaviour
     public void SetState(string newState)
     {
         state = newState;
-        print("New state: " + state);
+        //print("New state: " + state);
     }
 
 }

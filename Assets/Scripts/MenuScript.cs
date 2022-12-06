@@ -37,6 +37,7 @@ public class MenuScript : MonoBehaviour
         StartCoroutine(ReloadInSecs(2.0f));
         
         // Set cursor
-        Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
+        //Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
+        //Cursor.visible = true;
     }
 }

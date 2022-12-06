@@ -10,6 +10,7 @@ public class DuckController : MonoBehaviour
     private GameObject beak;
     private GameObject caughtPiraja;
     private AudioSource audioSource;
+    [SerializeField] private GameObject crossHair;
 
     [Header("Health")]
     [SerializeField] private int maxHealth;
@@ -46,8 +47,14 @@ public class DuckController : MonoBehaviour
 
         // Push all lives to activeDucks stack
         GameObject[] allDucks = GameObject.FindGameObjectsWithTag("Life");
-        for(int i = allDucks.Length - 1; i >= 0 ; i--) {
-            activeDucks.Push(allDucks[i]);
+        List<GameObject> activeDucksList = new List<GameObject>();
+        activeDucksList.AddRange(allDucks);
+        activeDucksList.Sort(SortByName);
+
+
+        for (int i = allDucks.Length - 1; i >= 0; i--)
+        {
+            activeDucks.Push(activeDucksList[i]);
         }
 
         // Find beak object
@@ -73,7 +80,7 @@ public class DuckController : MonoBehaviour
             // Catch/Release piraja
             if (Input.GetKeyDown(catchKey))
             {
-                
+
                 if (caughtPiraja)
                 {
                     ReleasePiraja();
@@ -82,7 +89,7 @@ public class DuckController : MonoBehaviour
                 {
                     CatchPiraja();
                 }
-                
+
             }
         }
     }
@@ -94,7 +101,8 @@ public class DuckController : MonoBehaviour
 
     public void giveHealth()
     {
-        if(health < maxHealth){
+        if (health < maxHealth)
+        {
             print("Gained " + gainHealthAmount + " health");
 
             health += gainHealthAmount;
@@ -119,7 +127,7 @@ public class DuckController : MonoBehaviour
             audioSource.clip = popSound;
             audioSource.Play();
             print("I took " + damage + " damage!");
-        
+
             if (health <= 0)
             {
                 health = 0;
@@ -138,7 +146,7 @@ public class DuckController : MonoBehaviour
         {
             Vector3 lookPos = hit.point;
             transform.LookAt(lookPos);
-            }
+        }
     }
 
     void ReleasePiraja()
@@ -148,6 +156,7 @@ public class DuckController : MonoBehaviour
         throwDir.y = throwHeight;   // OM Y ÄR HÖGT SÅ BLIR Z OCH X LÅGA. NORMALISERA X OCH Z!!!! SUMMA = 1
         caughtPiraja.GetComponent<PirajaAI>().SetReleased(throwDir, throwForce);
         PlayQuackAtPitch(0.9f);
+        crossHair.GetComponent<CrosshairScript>().setState(false); // Deactivate crosshair
 
         caughtPiraja = null;
     }
@@ -179,6 +188,7 @@ public class DuckController : MonoBehaviour
                 PlayQuackAtPitch(1.3f);
                 hit.transform.GetComponent<PirajaAI>().SetCaught(beak);
                 caughtPiraja = hit.transform.gameObject;
+                crossHair.GetComponent<CrosshairScript>().setState(true); // Activate crosshair
                 return;
             }
         }
@@ -192,5 +202,10 @@ public class DuckController : MonoBehaviour
         GetComponentInParent<Rigidbody>().constraints = RigidbodyConstraints.None;
         controlsEnabled = false;
         GetComponentInParent<PlayerMovement>().controlsEnabled = false;
+    }
+
+    private static int SortByName(GameObject o1, GameObject o2)
+    {
+        return o1.name.CompareTo(o2.name);
     }
 }
