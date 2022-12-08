@@ -9,6 +9,7 @@ public class MenuScript : MonoBehaviour
     [SerializeField] private GameObject cam;
 
     [SerializeField] private Texture2D cursorTexture;
+    [SerializeField] private Animation nextAnimation;
     private CursorMode cursorMode = CursorMode.Auto;
     private Vector2 hotSpot = Vector2.zero;
 
