@@ -52,9 +52,13 @@ public class PirajaAI : MonoBehaviour
 
     private string state;
 
+    private GameController gameController;
+
     // Start is called before the first frame update
     void Start()
     {
+
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         // Statemachine variables
         if (state != "flying")
         {
@@ -256,7 +260,7 @@ public class PirajaAI : MonoBehaviour
         if (Time.fixedTime - timeLastAttack >= attackInterval)
         {
             duck.GetComponent<DuckController>().DoDamage(attackDamage);
-            GetComponent<AudioSource>().Play();
+            gameController.playBiteSound();
             timeLastAttack = Time.fixedTime;
         }
     }

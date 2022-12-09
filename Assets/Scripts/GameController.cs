@@ -24,7 +24,10 @@ public class GameController : MonoBehaviour
     [SerializeField] private AudioClip deadSound;
     [SerializeField] private AudioClip plopSound;
     [SerializeField] private AudioClip popSound;
+    [SerializeField] private AudioClip biteSound;
 
+
+    private bool shouldPlayBiteSound;
 
     private bool toggleCam;
 
@@ -39,6 +42,7 @@ public class GameController : MonoBehaviour
         points = 0;
         cameraMode = 0;
         toggleCam = false;
+        shouldPlayBiteSound = false;
 
         // Get duck gameobject
         duck = GameObject.FindGameObjectWithTag("Duck");
@@ -74,6 +78,50 @@ public class GameController : MonoBehaviour
             switchCamera();
         }
 
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            nrOfPirajaToSpawn = 1;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            nrOfPirajaToSpawn = 2;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            nrOfPirajaToSpawn = 3;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            nrOfPirajaToSpawn = 4;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            nrOfPirajaToSpawn = 5;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            nrOfPirajaToSpawn = 6;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha7))
+        {
+            nrOfPirajaToSpawn = 7;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha8))
+        {
+            nrOfPirajaToSpawn = 8;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            nrOfPirajaToSpawn = 9;
+        }
+
+        if (shouldPlayBiteSound)
+        {
+            audioSource.clip = biteSound;
+            audioSource.Play();
+            shouldPlayBiteSound = false;
+        }
+
         // Update spawn timer
         spawnCountDown -= Time.deltaTime;
         if (spawnCountDown <= 0)
@@ -83,6 +131,13 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void playBiteSound()
+    {
+        if (!shouldPlayBiteSound)
+        {
+            shouldPlayBiteSound = true;
+        }
+    }
     void setCameraMode(int mode)
     {
         Camera.main.transform.position = cameraPositions[mode];
