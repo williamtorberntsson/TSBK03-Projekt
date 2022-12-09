@@ -9,13 +9,16 @@ public class MenuScript : MonoBehaviour
     [SerializeField] private GameObject cam;
 
     [SerializeField] private Texture2D cursorTexture;
-    [SerializeField] private Animation nextAnimation;
+    [SerializeField] private string animationTriggerName;
     private CursorMode cursorMode = CursorMode.Auto;
     private Vector2 hotSpot = Vector2.zero;
 
+    private Animator animator;
+
     void Start()
     {
-
+        animator = cam.GetComponent<Animator>();
+        animator.enabled = true;
     }
 
     // Update is called once per frame
@@ -34,7 +37,14 @@ public class MenuScript : MonoBehaviour
     {
         print("CLICKED!");
         GetComponent<AudioSource>().Play();
-        cam.GetComponent<Animator>().enabled = true;
+        //cam.GetComponent<Animator>().enabled = true;
+        print("Trigger: " + animationTriggerName);
+
+        // This
+        // animator.SetTrigger(animationTriggerName); does not work
+        animator.SetTrigger("onStartFromStart"); // works
+        // This
+
         StartCoroutine(ReloadInSecs(2.0f));
         
         // Set cursor

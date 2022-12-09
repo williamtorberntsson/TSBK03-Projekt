@@ -26,7 +26,6 @@ public class GameController : MonoBehaviour
     [SerializeField] private AudioClip plopSound;
     [SerializeField] private AudioClip popSound;
 
-
     private bool toggleCam;
 
     [SerializeField] private TMP_Text scoreText;

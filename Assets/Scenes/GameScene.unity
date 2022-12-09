@@ -1027,7 +1027,7 @@ MonoBehaviour:
   gameController: {fileID: 878096996}
   cam: {fileID: 122963650}
   cursorTexture: {fileID: 2800000, guid: 95f21f96fc47b6c40966284c8971f39c, type: 3}
-  nextAnimation: {fileID: 0}
+  animationTriggerName: 0
 --- !u!82 &74521209
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2264,7 +2264,7 @@ MonoBehaviour:
   gameController: {fileID: 878096996}
   cam: {fileID: 122963650}
   cursorTexture: {fileID: 2800000, guid: 95f21f96fc47b6c40966284c8971f39c, type: 3}
-  nextAnimation: {fileID: 0}
+  animationTriggerName: 5
 --- !u!114 &295029338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7329,7 +7329,7 @@ MonoBehaviour:
   gameController: {fileID: 878096996}
   cam: {fileID: 122963650}
   cursorTexture: {fileID: 2800000, guid: 95f21f96fc47b6c40966284c8971f39c, type: 3}
-  nextAnimation: {fileID: 0}
+  animationTriggerName: 0
 --- !u!1 &1178957530
 GameObject:
   m_ObjectHideFlags: 0
