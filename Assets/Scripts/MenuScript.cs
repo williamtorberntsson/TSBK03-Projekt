@@ -9,7 +9,6 @@ public class MenuScript : MonoBehaviour
     [SerializeField] private GameObject cam;
 
     [SerializeField] private Texture2D cursorTexture;
-    [SerializeField] private string animationTriggerName;
     private CursorMode cursorMode = CursorMode.Auto;
     private Vector2 hotSpot = Vector2.zero;
     private string state = "start";
@@ -28,20 +27,23 @@ public class MenuScript : MonoBehaviour
     }
 
     public void StartGameButton() {
+        print("prev state:" + state);
         if(state == "start") {
             animator.SetTrigger("onStartFromStart");
             state = "game";
             GetComponent<AudioSource>().Play();
-            StartCoroutine(ReloadInSecs(3.0f));
+            StartCoroutine(ReloadInSecs(5.3f));
         } else if(state == "controls") {
             animator.SetTrigger("onControlsToStartGame");
             state = "game";
             GetComponent<AudioSource>().Play();
-            StartCoroutine(ReloadInSecs(4.0f));
+            StartCoroutine(ReloadInSecs(5.5f));
         }
+        MovePlayerToKitchen();
     }
 
     public void ControlsButton() {
+        print("prev state:" + state);
         if(state == "start") {
             animator.SetTrigger("onStartToControls");
             state = "controls";
@@ -49,23 +51,10 @@ public class MenuScript : MonoBehaviour
         }
     }
 
-    public void StartGame()
-    {
-        print("CLICKED!");
-        GetComponent<AudioSource>().Play();
-        //cam.GetComponent<Animator>().enabled = true;
-        print("Trigger: " + animationTriggerName);
-
-        // This
-        // animator.SetTrigger(animationTriggerName); does not work
-        animator.SetTrigger("onStartFromStart"); // works
-        // This
-
-        StartCoroutine(ReloadInSecs(2.0f));
-        
-        // Set cursor
-        //Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
-        //Cursor.visible = true;
+    private void MovePlayerToKitchen() {
+        print("moving player to kitchen");
+        GameObject Player = GameObject.FindGameObjectWithTag("Player");
+        Player.GetComponent<Transform>().transform.position = new Vector3(-9, 3, -3);
     }
 
     IEnumerator ReloadInSecs(float t)
