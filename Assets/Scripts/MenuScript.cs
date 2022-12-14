@@ -12,7 +12,7 @@ public class MenuScript : MonoBehaviour
     [SerializeField] private string animationTriggerName;
     private CursorMode cursorMode = CursorMode.Auto;
     private Vector2 hotSpot = Vector2.zero;
-
+    private string state = "start";
     private Animator animator;
 
     void Start()
@@ -27,12 +27,28 @@ public class MenuScript : MonoBehaviour
 
     }
 
-
-    IEnumerator ReloadInSecs(float t)
-    {
-        yield return new WaitForSeconds(t);
-        gameController.GetComponent<GameController>().enabled = true;
+    public void StartGameButton() {
+        if(state == "start") {
+            animator.SetTrigger("onStartFromStart");
+            state = "game";
+            GetComponent<AudioSource>().Play();
+            StartCoroutine(ReloadInSecs(3.0f));
+        } else if(state == "controls") {
+            animator.SetTrigger("onControlsToStartGame");
+            state = "game";
+            GetComponent<AudioSource>().Play();
+            StartCoroutine(ReloadInSecs(4.0f));
+        }
     }
+
+    public void ControlsButton() {
+        if(state == "start") {
+            animator.SetTrigger("onStartToControls");
+            state = "controls";
+            GetComponent<AudioSource>().Play();
+        }
+    }
+
     public void StartGame()
     {
         print("CLICKED!");
@@ -51,4 +67,11 @@ public class MenuScript : MonoBehaviour
         //Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
         //Cursor.visible = true;
     }
+
+    IEnumerator ReloadInSecs(float t)
+    {
+        yield return new WaitForSeconds(t);
+        gameController.GetComponent<GameController>().enabled = true;
+    }
+
 }
