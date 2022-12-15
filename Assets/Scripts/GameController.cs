@@ -107,6 +107,10 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void setDifficulty(float newSpawnScaling){
+        spawnScaling = (int)newSpawnScaling;
+    }
+
     public void playBiteSound()
     {
         if (!shouldPlayBiteSound)

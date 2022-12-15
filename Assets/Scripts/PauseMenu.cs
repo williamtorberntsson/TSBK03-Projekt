@@ -42,4 +42,9 @@ public class PauseMenu : MonoBehaviour
     public void ExitGame() {
         Application.Quit();
     }
+
+    public void ChangeDifficulty(float value){
+        print("changed diffi: " + value);
+        gameController.GetComponent<GameController>().setDifficulty(value);
+    }
 }
