@@ -11,6 +11,10 @@ public class GameController : MonoBehaviour
     private List<Vector3> cameraAngles;
     private int points;
 
+    private Animator animator;
+    [SerializeField] private GameObject cam;
+    [SerializeField] private PauseMenu pauseMenu; 
+
     [Header("Spawn piraja")]
     [SerializeField] private float spawnInterval;
     [SerializeField] private GameObject pirajaPrefab;
@@ -27,10 +31,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private AudioClip popSound;
     [SerializeField] private AudioClip biteSound;
 
-
     private bool shouldPlayBiteSound;
-
-    private bool toggleCam;
 
     [SerializeField] private TMP_Text scoreText;
 
@@ -42,7 +43,6 @@ public class GameController : MonoBehaviour
     {
         points = 0;
         cameraMode = 0;
-        toggleCam = false;
         shouldPlayBiteSound = false;
 
         // Get duck gameobject
@@ -57,9 +57,12 @@ public class GameController : MonoBehaviour
         cameraPositions = new List<Vector3>();
         cameraAngles = new List<Vector3>();
 
+        animator = cam.GetComponent<Animator>();
+        animator.enabled = true;
+
 
         // Camera angle 0
-        cameraPositions.Add(new Vector3(0.0f, 16.7f, -14.7f));
+        cameraPositions.Add(new Vector3(0.0f, 16.7f, -13.6f));
         cameraAngles.Add(new Vector3(55f, 0.0f, 0.0f));
         // Camera angle 1
         cameraPositions.Add(new Vector3(0.0f, 7.60f, -15.85f));
@@ -72,10 +75,11 @@ public class GameController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            //UnityEditor.EditorWindow.focusedWindow.maximized = !UnityEditor.EditorWindow.focusedWindow.maximized;
+            pauseMenu.Pause();
         }
         if (Input.GetKeyDown(KeyCode.K))
         {
+            print("switch camera");
             switchCamera();
         }
 
@@ -118,6 +122,8 @@ public class GameController : MonoBehaviour
 
     void switchCamera()
     {
+        animator.enabled = false;
+
         int nrOfCameraModes = cameraPositions.Count;
         Camera.main.transform.position = cameraPositions[(cameraMode + 1) % nrOfCameraModes];
         Camera.main.transform.eulerAngles = cameraAngles[(cameraMode + 1) % nrOfCameraModes];

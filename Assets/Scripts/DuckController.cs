@@ -126,7 +126,7 @@ public class DuckController : MonoBehaviour
             currDuck.SetActive(false);
             audioSource.clip = popSound;
             audioSource.Play();
-            print("I took " + damage + " damage!");
+            //print("I took " + damage + " damage!");
 
             if (health <= 0)
             {

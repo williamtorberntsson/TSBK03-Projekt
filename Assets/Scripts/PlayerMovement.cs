@@ -8,18 +8,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float moveSpeed;
 
     [SerializeField] private float groundDrag;
-    [SerializeField] private float jumpForce;
-    [SerializeField] private float jumpCooldown;
-    [SerializeField] private float airMultiplier;
-    bool readyToJump;
 
     [Header("Ground Check")]
     [SerializeField] private float playerHeight;
     [SerializeField] private LayerMask whatIsGround;
     bool grounded;
-
-    [Header("KeyBinds")]
-    [SerializeField] private KeyCode jumpKey = KeyCode.Space;
 
     public Transform orientation;
     
@@ -37,7 +30,6 @@ public class PlayerMovement : MonoBehaviour
         controlsEnabled = true;
         rigidBody = GetComponent<Rigidbody>();
         rigidBody.freezeRotation = true;
-        ResetJump();
     }
 
     // Update is called once per frame
@@ -47,10 +39,6 @@ public class PlayerMovement : MonoBehaviour
 
             grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight* 0.5f + 0.2f, whatIsGround);
             MyInput();
-
-            //Debug.Log(grounded);
-        // if(Input.GetKey(jumpKey))
-            //    Debug.Log(jumpKey);
 
             // handle drag
             if (grounded)
@@ -70,14 +58,6 @@ public class PlayerMovement : MonoBehaviour
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
-
-        // Can jump?
-       /* if(Input.GetKey(jumpKey) && readyToJump && grounded) {
-            readyToJump = false;
-            Jump();
-
-            Invoke(nameof(ResetJump), jumpCooldown); // Reset readyToJump after a certain time
-        }*/
     }
 
 
@@ -86,19 +66,5 @@ public class PlayerMovement : MonoBehaviour
 
         if(grounded)
             rigidBody.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
-        else // in air
-            rigidBody.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
-
-    }
-
-    private void Jump() {
-        // Set y velocity to 0
-        rigidBody.velocity = new Vector3(rigidBody.velocity.x, 0, rigidBody.velocity.z);
-
-        rigidBody.AddForce(transform.up * jumpForce, ForceMode.Impulse); // only apply force once
-    }
-
-    private void ResetJump() {
-        readyToJump = true;
     }
 }

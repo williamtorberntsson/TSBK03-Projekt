@@ -9,15 +9,16 @@ public class MenuScript : MonoBehaviour
     [SerializeField] private GameObject cam;
 
     [SerializeField] private Texture2D cursorTexture;
-    private CursorMode cursorMode = CursorMode.Auto;
-    private Vector2 hotSpot = Vector2.zero;
-    private string state = "start";
+    private string state;
     private Animator animator;
+    private GameObject Player;
 
     void Start()
     {
+        state = "start";
         animator = cam.GetComponent<Animator>();
         animator.enabled = true;
+        Player = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
@@ -32,12 +33,15 @@ public class MenuScript : MonoBehaviour
             animator.SetTrigger("onStartFromStart");
             state = "game";
             GetComponent<AudioSource>().Play();
+            StartCoroutine(MovePlayerToKitchen());
             StartCoroutine(ReloadInSecs(5.3f));
         } else if(state == "controls") {
             animator.SetTrigger("onControlsToStartGame");
             state = "game";
             GetComponent<AudioSource>().Play();
+            StartCoroutine(MovePlayerToKitchen());
             StartCoroutine(ReloadInSecs(5.5f));
+
         }
         MovePlayerToKitchen();
     }
@@ -50,10 +54,12 @@ public class MenuScript : MonoBehaviour
             GetComponent<AudioSource>().Play();
         }
     }
+ 
 
-    private void MovePlayerToKitchen() {
+    IEnumerator MovePlayerToKitchen() {
         print("moving player to kitchen");
-        GameObject Player = GameObject.FindGameObjectWithTag("Player");
+        Player.GetComponentInChildren<DuckController>().enabled = false;
+        yield return new WaitForSeconds(4.5f);
         Player.GetComponent<Transform>().transform.position = new Vector3(-9, 3, -3);
     }
 
@@ -61,6 +67,7 @@ public class MenuScript : MonoBehaviour
     {
         yield return new WaitForSeconds(t);
         gameController.GetComponent<GameController>().enabled = true;
+        Player.GetComponentInChildren<DuckController>().enabled = true;
     }
 
 }
