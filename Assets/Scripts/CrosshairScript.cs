@@ -21,7 +21,10 @@ public class CrosshairScript : MonoBehaviour
         if (activeCrosshair)
         {
             RaycastHit hit;
-            Vector3 crossPos = duckTrans.position + dist * new Vector3(duckTrans.forward.x, 0, duckTrans.forward.z);
+            Vector3 duck2dPos = duckTrans.forward;
+            duck2dPos.y = 0f;
+            duck2dPos.Normalize();
+            Vector3 crossPos = duckTrans.position + dist * duck2dPos;
             crossPos.y += 5.0f;
 
             //Debug.DrawRay(crossPos, Vector3.down * 8.0f, Color.magenta);

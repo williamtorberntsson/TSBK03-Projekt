@@ -66,14 +66,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   groundDrag: 5
-  jumpForce: 12
-  jumpCooldown: 0.2
-  airMultiplier: 0.4
   playerHeight: 2
   whatIsGround:
     serializedVersion: 2
     m_Bits: 128
-  jumpKey: 32
   orientation: {fileID: 0}
   controlsEnabled: 0
 --- !u!1 &4282647913124499834
