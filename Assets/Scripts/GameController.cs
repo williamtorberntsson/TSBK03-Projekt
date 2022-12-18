@@ -30,6 +30,8 @@ public class GameController : MonoBehaviour
     [SerializeField] private AudioClip plopSound;
     [SerializeField] private AudioClip popSound;
     [SerializeField] private AudioClip biteSound;
+    [SerializeField] private AudioClip clickSound;
+
 
     private bool shouldPlayBiteSound;
 
@@ -117,6 +119,12 @@ public class GameController : MonoBehaviour
         {
             shouldPlayBiteSound = true;
         }
+    }
+
+    public void playClickSound()
+    {
+        audioSource.clip = clickSound;
+        audioSource.Play();
     }
     void setCameraMode(int mode)
     {

@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private GameObject pauseMenu;
-    [SerializeField] private GameObject gameController;
+    [SerializeField] private GameController gameController;
 
     private bool paused;
     private Animator animator;
@@ -17,7 +17,8 @@ public class PauseMenu : MonoBehaviour
         animator = Camera.main.GetComponent<Animator>();
     }
     public void Pause() {
-        if(!paused){
+        gameController.playClickSound();
+        if (!paused){
             pauseMenu.SetActive(true);
             Time.timeScale = 0f;
             paused = true;
@@ -29,22 +30,25 @@ public class PauseMenu : MonoBehaviour
         
     }
     public void Resume() {
+        gameController.playClickSound();
         pauseMenu.SetActive(false);
         Time.timeScale = 1.0f;
         paused = false;
     }
 
     public void Restart() {
+        gameController.playClickSound();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         Time.timeScale = 1.0f;
     }
 
     public void ExitGame() {
+        gameController.playClickSound();
         Application.Quit();
     }
 
     public void ChangeDifficulty(float value){
         print("changed diffi: " + value);
-        gameController.GetComponent<GameController>().setDifficulty(value);
+        gameController.setDifficulty(value);
     }
 }
