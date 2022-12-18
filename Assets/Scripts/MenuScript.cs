@@ -65,7 +65,7 @@ public class MenuScript : MonoBehaviour
     IEnumerator MovePlayerToKitchen(float delay) {
         print("moving player to kitchen");
         Player.GetComponentInChildren<DuckController>().enabled = false;
-        yield return new WaitForSeconds(4.2f + delay);
+        yield return new WaitForSeconds(4.5f + delay);
         Player.GetComponent<Transform>().transform.position = new Vector3(-9, 3, -3);
     }
 
