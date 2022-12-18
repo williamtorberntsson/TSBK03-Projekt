@@ -7,6 +7,8 @@ public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private GameObject pauseMenu;
     [SerializeField] private GameController gameController;
+    [SerializeField] private PauseMenuController pauseMenuController;
+
     [SerializeField] private GameObject backgroundMusicController;
 
     private bool paused;
@@ -18,7 +20,7 @@ public class PauseMenu : MonoBehaviour
         animator = Camera.main.GetComponent<Animator>();
     }
     public void Pause() {
-        gameController.playClickSound();
+        pauseMenuController.playClickSound();
         if (!paused){
             backgroundMusicController.GetComponent<AudioSource>().pitch = 0.6f;
             pauseMenu.SetActive(true);
@@ -32,7 +34,7 @@ public class PauseMenu : MonoBehaviour
         
     }
     public void Resume() {
-        gameController.playClickSound();
+        pauseMenuController.playClickSound();
         backgroundMusicController.GetComponent<AudioSource>().pitch = 1f;
         pauseMenu.SetActive(false);
         Time.timeScale = 1.0f;
@@ -40,13 +42,13 @@ public class PauseMenu : MonoBehaviour
     }
 
     public void Restart() {
-        gameController.playClickSound();
+        pauseMenuController.playClickSound();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         Time.timeScale = 1.0f;
     }
 
     public void ExitGame() {
-        gameController.playClickSound();
+        pauseMenuController.playClickSound();
         Application.Quit();
     }
 

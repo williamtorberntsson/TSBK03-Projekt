@@ -14,7 +14,6 @@ public class GameController : MonoBehaviour
 
     private Animator animator;
     [SerializeField] private GameObject cam;
-    [SerializeField] private PauseMenu pauseMenu;
 
 
     [Header("Spawn piraja")]
@@ -77,10 +76,7 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            pauseMenu.Pause();
-        }
+        
         if (Input.GetKeyDown(KeyCode.K))
         {
             print("switch camera");
@@ -123,11 +119,7 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public void playClickSound()
-    {
-        audioSource.clip = clickSound;
-        audioSource.Play();
-    }
+   
     void setCameraMode(int mode)
     {
         Camera.main.transform.position = cameraPositions[mode];
