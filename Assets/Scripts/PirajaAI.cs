@@ -203,6 +203,7 @@ public class PirajaAI : MonoBehaviour
     // Check if located ontop of kitchen and need to respawn
     bool ShouldRespawn()
     {
+        Debug.DrawRay(transform.position, Vector3.down * (pirajaHeight * 0.5f + 0.2f), Color.blue);
         bool grounded = Physics.Raycast(transform.position, Vector3.down, pirajaHeight * 0.5f + 0.2f, whatIsKitchenDecoration);
         if (grounded)
         {

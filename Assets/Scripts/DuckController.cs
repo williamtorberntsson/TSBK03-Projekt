@@ -152,8 +152,8 @@ public class DuckController : MonoBehaviour
     void ReleasePiraja()
     {
         Vector3 throwDir = new Vector3(transform.forward.x, 0, transform.forward.z);
-        throwDir = Vector3.Normalize(throwDir);
-        throwDir.y = throwHeight;   // OM Y ÄR HÖGT SÅ BLIR Z OCH X LÅGA. NORMALISERA X OCH Z!!!! SUMMA = 1
+        throwDir = Vector3.Normalize(throwDir); // OM Y ÄR HÖGT SÅ BLIR Z OCH X LÅGA. NORMALISERA X OCH Z! SUMMA = 1
+        throwDir.y = throwHeight;   
         caughtPiraja.GetComponent<PirajaAI>().SetReleased(throwDir, throwForce);
         PlayQuackAtPitch(0.9f);
         crossHair.GetComponent<CrosshairScript>().setState(false); // Deactivate crosshair
