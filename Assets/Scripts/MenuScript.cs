@@ -31,11 +31,10 @@ public class MenuScript : MonoBehaviour
     public void StartGameButton() {
         print("prev state:" + state);
         if(state == "start") {
-            StartGame(5.3f, "onStartFromStart");
+            StartGame(0f, "onStartFromStart");
         } else if(state == "controls") {
-            StartGame(5.5f, "onControlsToStartGame");
+            StartGame(0.2f, "onControlsToStartGame");
         }
-        MovePlayerToKitchen();
     }
 
     private void StartGame(float delay, string trigger)
@@ -43,9 +42,9 @@ public class MenuScript : MonoBehaviour
         animator.SetTrigger(trigger);
         state = "game";
         GetComponent<AudioSource>().Play();
-        StartCoroutine(MakeSoundNotMuffled());
-        StartCoroutine(MovePlayerToKitchen());
-        StartCoroutine(StartGameInSecs(delay));
+        StartCoroutine(MakeSoundNotMuffled(delay));
+        StartCoroutine(MovePlayerToKitchen(delay));
+        StartCoroutine(StartGameInSecs(5.3f + delay));
     }
 
     public void ControlsButton() {
@@ -56,17 +55,17 @@ public class MenuScript : MonoBehaviour
             GetComponent<AudioSource>().Play();
         }
     }
-    IEnumerator MakeSoundNotMuffled()
+    IEnumerator MakeSoundNotMuffled(float delay)
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2.8f + delay);
         backgroundMusicController.GetComponent<AudioReverbFilter>().enabled = false;
 
     }
 
-    IEnumerator MovePlayerToKitchen() {
+    IEnumerator MovePlayerToKitchen(float delay) {
         print("moving player to kitchen");
         Player.GetComponentInChildren<DuckController>().enabled = false;
-        yield return new WaitForSeconds(4.5f);
+        yield return new WaitForSeconds(4.5f + delay);
         Player.GetComponent<Transform>().transform.position = new Vector3(-9, 3, -3);
     }
 

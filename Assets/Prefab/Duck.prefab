@@ -217,7 +217,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   crossHair: {fileID: 4282647913124499834}
   duckTrans: {fileID: 4247028208192629075}
-  dist: 10
+  dist: 9
   activeCrosshair: 0
 --- !u!1 &7968495113532077782
 GameObject:
