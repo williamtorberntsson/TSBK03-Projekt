@@ -7,6 +7,7 @@ public class MenuScript : MonoBehaviour
     // Start is called before the first frame update
     [SerializeField] private GameObject gameController;
     [SerializeField] private GameObject cam;
+    [SerializeField] private GameObject backgroundMusicController;
 
     [SerializeField] private Texture2D cursorTexture;
     private string state;
@@ -30,20 +31,21 @@ public class MenuScript : MonoBehaviour
     public void StartGameButton() {
         print("prev state:" + state);
         if(state == "start") {
-            animator.SetTrigger("onStartFromStart");
-            state = "game";
-            GetComponent<AudioSource>().Play();
-            StartCoroutine(MovePlayerToKitchen());
-            StartCoroutine(ReloadInSecs(5.3f));
+            StartGame(5.3f, "onStartFromStart");
         } else if(state == "controls") {
-            animator.SetTrigger("onControlsToStartGame");
-            state = "game";
-            GetComponent<AudioSource>().Play();
-            StartCoroutine(MovePlayerToKitchen());
-            StartCoroutine(ReloadInSecs(5.5f));
-
+            StartGame(5.5f, "onControlsToStartGame");
         }
         MovePlayerToKitchen();
+    }
+
+    private void StartGame(float delay, string trigger)
+    {
+        animator.SetTrigger(trigger);
+        state = "game";
+        GetComponent<AudioSource>().Play();
+        StartCoroutine(MakeSoundNotMuffled());
+        StartCoroutine(MovePlayerToKitchen());
+        StartCoroutine(StartGameInSecs(delay));
     }
 
     public void ControlsButton() {
@@ -54,7 +56,12 @@ public class MenuScript : MonoBehaviour
             GetComponent<AudioSource>().Play();
         }
     }
- 
+    IEnumerator MakeSoundNotMuffled()
+    {
+        yield return new WaitForSeconds(3f);
+        backgroundMusicController.GetComponent<AudioReverbFilter>().enabled = false;
+
+    }
 
     IEnumerator MovePlayerToKitchen() {
         print("moving player to kitchen");
@@ -63,7 +70,7 @@ public class MenuScript : MonoBehaviour
         Player.GetComponent<Transform>().transform.position = new Vector3(-9, 3, -3);
     }
 
-    IEnumerator ReloadInSecs(float t)
+    IEnumerator StartGameInSecs(float t)
     {
         yield return new WaitForSeconds(t);
         gameController.GetComponent<GameController>().enabled = true;

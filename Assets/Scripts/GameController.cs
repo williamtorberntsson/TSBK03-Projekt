@@ -13,7 +13,9 @@ public class GameController : MonoBehaviour
 
     private Animator animator;
     [SerializeField] private GameObject cam;
-    [SerializeField] private PauseMenu pauseMenu; 
+    [SerializeField] private PauseMenu pauseMenu;
+    [SerializeField] private GameObject backgroundMusicController;
+
 
     [Header("Spawn piraja")]
     [SerializeField] private float spawnInterval;
@@ -46,7 +48,7 @@ public class GameController : MonoBehaviour
         points = 0;
         cameraMode = 0;
         shouldPlayBiteSound = false;
-
+        backgroundMusicController.GetComponent<AudioReverbFilter>().enabled = false;
         // Get duck gameobject
         duck = GameObject.FindGameObjectWithTag("Duck");
 

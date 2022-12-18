@@ -2194,6 +2194,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameController: {fileID: 878096996}
   cam: {fileID: 122963650}
+  backgroundMusicController: {fileID: 1953799780}
   cursorTexture: {fileID: 2800000, guid: 95f21f96fc47b6c40966284c8971f39c, type: 3}
 --- !u!114 &295029338
 MonoBehaviour:
@@ -5620,6 +5621,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 122963650}
   pauseMenu: {fileID: 1428984951}
+  backgroundMusicController: {fileID: 1953799780}
   spawnInterval: 5
   pirajaPrefab: {fileID: 754682278248036515, guid: 2ada9b5f8b07a2c419dd83e27835c82b, type: 3}
   minNrOfPirajaToSpawn: 3
@@ -7744,6 +7746,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameController: {fileID: 878096996}
   cam: {fileID: 122963650}
+  backgroundMusicController: {fileID: 0}
   cursorTexture: {fileID: 2800000, guid: 95f21f96fc47b6c40966284c8971f39c, type: 3}
 --- !u!1 &1178957530
 GameObject:
@@ -9301,6 +9304,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 1428984950}
   gameController: {fileID: 878096997}
+  backgroundMusicController: {fileID: 1953799780}
 --- !u!114 &1428984952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17710,6 +17714,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1953799782}
   - component: {fileID: 1953799781}
+  - component: {fileID: 1953799783}
   m_Layer: 0
   m_Name: BackgroundMusic
   m_TagString: Untagged
@@ -17828,6 +17833,29 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!164 &1953799783
+AudioReverbFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1953799780}
+  m_Enabled: 1
+  m_DryLevel: -5453
+  m_Room: -1154
+  m_RoomHF: -2865
+  m_DecayTime: 1
+  m_DecayHFRatio: 0.5
+  m_ReflectionsLevel: -7154
+  m_ReverbLevel: 1054
+  m_ReverbDelay: 0.0334
+  m_Diffusion: 42.7
+  m_Density: 87.5
+  m_HFReference: 5790
+  m_RoomLF: 0
+  m_LFReference: 250
+  m_ReflectionsDelay: 0.029
+  m_ReverbPreset: 27
 --- !u!1 &1985950416
 GameObject:
   m_ObjectHideFlags: 0
