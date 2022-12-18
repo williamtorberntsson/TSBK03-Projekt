@@ -31,9 +31,9 @@ public class MenuScript : MonoBehaviour
     public void StartGameButton() {
         print("prev state:" + state);
         if(state == "start") {
-            StartGame(0f, "onStartFromStart");
+            StartGame(0.07f, "onStartFromStart");
         } else if(state == "controls") {
-            StartGame(0.2f, "onControlsToStartGame");
+            StartGame(0f, "onControlsToStartGame");
         }
     }
 
@@ -44,7 +44,7 @@ public class MenuScript : MonoBehaviour
         GetComponent<AudioSource>().Play();
         StartCoroutine(MakeSoundNotMuffled(delay));
         StartCoroutine(MovePlayerToKitchen(delay));
-        StartCoroutine(StartGameInSecs(5.3f + delay));
+        StartCoroutine(StartGameInSecs(5f + delay));
     }
 
     public void ControlsButton() {
@@ -65,7 +65,7 @@ public class MenuScript : MonoBehaviour
     IEnumerator MovePlayerToKitchen(float delay) {
         print("moving player to kitchen");
         Player.GetComponentInChildren<DuckController>().enabled = false;
-        yield return new WaitForSeconds(4.5f + delay);
+        yield return new WaitForSeconds(4.2f + delay);
         Player.GetComponent<Transform>().transform.position = new Vector3(-9, 3, -3);
     }
 
