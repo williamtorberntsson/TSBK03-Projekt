@@ -6378,7 +6378,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1399213350}
   m_Direction: 1
   m_MinValue: 3
-  m_MaxValue: 10
+  m_MaxValue: 20
   m_WholeNumbers: 1
   m_Value: 3
   m_OnValueChanged:
@@ -8825,6 +8825,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11427198, guid: affd85d75c3c8e54b802be2df6f1770f, type: 3}
       propertyPath: m_FontData.m_HorizontalOverflow
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11446852, guid: affd85d75c3c8e54b802be2df6f1770f, type: 3}
+      propertyPath: m_PresetInfoIsWorld
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11494920, guid: affd85d75c3c8e54b802be2df6f1770f, type: 3}
