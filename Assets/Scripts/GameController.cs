@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
@@ -14,7 +15,6 @@ public class GameController : MonoBehaviour
     private Animator animator;
     [SerializeField] private GameObject cam;
     [SerializeField] private PauseMenu pauseMenu;
-    [SerializeField] private GameObject backgroundMusicController;
 
 
     [Header("Spawn piraja")]
@@ -37,7 +37,7 @@ public class GameController : MonoBehaviour
 
     private bool shouldPlayBiteSound;
 
-    [SerializeField] private TMP_Text scoreText;
+    [SerializeField] private Text scoreText;
 
     private GameObject duck;
     private AudioSource audioSource;
@@ -48,7 +48,7 @@ public class GameController : MonoBehaviour
         points = 0;
         cameraMode = 0;
         shouldPlayBiteSound = false;
-        backgroundMusicController.GetComponent<AudioReverbFilter>().enabled = false;
+        
         // Get duck gameobject
         duck = GameObject.FindGameObjectWithTag("Duck");
 
@@ -147,7 +147,7 @@ public class GameController : MonoBehaviour
     public void AddPoints(int i)
     {
         points += i;
-        scoreText.text = "SCORE: " + points;
+        scoreText.text = "Score: " + points;
 
         print("Points: " + points);
 

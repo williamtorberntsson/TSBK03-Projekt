@@ -29,7 +29,7 @@ public class CrosshairScript : MonoBehaviour
             if (Physics.Raycast(crossPos, Vector3.down, out hit, 8.0f))
             {
                 print("hit: " + hit.point + "\n");
-                crossPos.y = hit.point.y;
+                crossPos.y = hit.point.y + 0.1f;
             }
             crossHair.transform.position = crossPos;
         }
